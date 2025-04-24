@@ -142,7 +142,3 @@ Since the **third octet** starts at `224`, which has a decimal step of **32**, e
 |6|172.16.160.0|172.16.160.1|172.16.191.254|172.16.191.255|
 |7|172.16.192.0|172.16.192.1|172.16.223.254|172.16.223.255|
 |8|172.16.224.0|172.16.224.1|172.16.255.254|172.16.255.255|
-
----
-
-Let me know if you want this saved as a `.md` file for your `docs/` directory.

@@ -60,5 +60,3 @@ cloud-infra-bootstrapping/
 │           └── variables.tf
 └── hold.tf                  # (placeholder for later use)
 ```
-
-Let me know if you'd like this inserted into your actual `README.md` file — or if you'd like help integrating the backend config block!
