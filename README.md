@@ -48,15 +48,15 @@ cloud-infra-bootstrapping/
 │   ├── aws-cli-setup.md
 │   └── Quick Subnetting Refresher (For Cloud Engineers).md
 ├── cloudinfra/
-│   ├── main.tf
-│   ├── variables.tf
-│   ├── local.tf
-│   ├── outputs.tf
-│   ├── terraform.tf         # Will define S3 + DynamoDB backend here
-│   └── modules/
-│       └── vpc/
-│           ├── main.tf
-│           ├── output.tf
-│           └── variables.tf
-└── hold.tf                  # (placeholder for later use)
+   ├── main.tf
+   ├── variables.tf
+   ├── local.tf
+   ├── outputs.tf
+   ├── terraform.tf        
+   └── modules/
+       └── vpc/
+           ├── main.tf
+           ├── output.tf
+           └── variables.tf
+
 ```
