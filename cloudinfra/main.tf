@@ -7,3 +7,9 @@ module "vpc" {
   azs_public = local.azs_public
   
 }
+
+module "backend" {
+  
+  source = "./modules/backend"
+
+}
