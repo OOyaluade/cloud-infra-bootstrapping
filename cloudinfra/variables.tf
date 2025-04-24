@@ -1,5 +1,7 @@
-variable "cidr_block" {
-  type    = string
-  default = "192.255.255.0/24"
+variable "vpc_cidr" {
+    description = "CIDR block for the VPC"
+    type        = string
+    default     = "172.16.0.0/19"
+    
+  
 }
-

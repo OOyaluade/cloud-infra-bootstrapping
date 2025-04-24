@@ -1,23 +1,25 @@
-output "subnet_id_list" {
-  value = local.cidr_block
+output "private_subnets" {
+  
+  value = local.private_subnets
 }
-
-output "public_subnet" {
-  value = aws_subnet.public_subnet
-
-}
-
-
-output "private_subnet" {
-  value = aws_subnet.private_subnet
-
-}
-
-
-output "route_tables_details" {
-  value = data.aws_route_tables.route_tables_details
-
+output "public_subnets" {
+  
+  value = local.public_subnets
 }
 
 
 
+output "vpc_id" {
+  description = "The ID of the VPC"
+  value       = module.vpc.vpc_id
+}
+
+output "public_subnet_ids" {
+  description = "List of public subnet IDs"
+  value       = module.vpc.public_subnet_ids
+}
+
+output "private_subnet_ids" {
+  description = "List of private subnet IDs"
+  value       = module.vpc.private_subnet_ids
+}
