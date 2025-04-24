@@ -1,25 +1,64 @@
-# [AWS CLI & IAM Setup](https://github.com/OOyaluade/cloud-infra-bootstrapping/tree/main/docs)
-> ✉️ See `docs/aws-cli-setup.md` for full config steps.
+# 📌 [AWS CLI & IAM Setup](https://github.com/OOyaluade/cloud-infra-bootstrapping/tree/main/docs)
 
-### 📂 Account Design (Planned Structure)
+> ✉️ For full configuration steps, see [`docs/aws-cli-setup.md`](URL)
 
+---
 
-See the cloudinfra terraform file to on the IAC code for subnetting this address
-![[Pasted image 20250424105332.png]]
+### 🏛️ Account Design (Planned Structure)
 
-| Subnet | AZ            | Network ID   | First IP     | Last IP        | Broadcast      |
-| ------ | ------------- | ------------ | ------------ | -------------- | -------------- |
-| 1      | Communication | 172.16.0.0   | 172.16.0.1   | 172.16.31.254  | 172.16.31.255  |
-| 2      | Dev           | 172.16.32.0  | 172.16.32.1  | 172.16.63.254  | 172.16.63.255  |
-| 3      | Prod          | 172.16.64.0  | 172.16.64.1  | 172.16.95.254  | 172.16.95.255  |
-| 4      |               | 172.16.96.0  | 172.16.96.1  | 172.16.127.254 | 172.16.127.255 |
-| 5      |               | 172.16.128.0 | 172.16.128.1 | 172.16.159.254 | 172.16.159.255 |
-| 6      |               | 172.16.160.0 | 172.16.160.1 | 172.16.191.254 | 172.16.191.255 |
-| 7      |               | 172.16.192.0 | 172.16.192.1 | 172.16.223.254 | 172.16.223.255 |
-| 8      |               | 172.16.224.0 | 172.16.224.1 | 172.16.255.254 | 172.16.255.255 |
+|Account|Purpose|
+|---|---|
+|**Management**|Root account, billing, SCPs|
+|**Dev**|All non-prod resources & testing|
+|**Prod**|Critical workloads (future setup)|
 
-| Account    | Purpose                           |
-| ---------- | --------------------------------- |
-| Management | Root account, billing, SCPs       |
-| Dev        | All non-prod resources & testing  |
-| Prod       | Critical workloads (future setup) |
+---
+
+### 🗃️ Terraform State File Tracking
+
+> [!NOTE] **Terraform Backend Design**  
+> This project uses an **S3 + DynamoDB backend** for state file storage and locking.  
+> While realistic for production use, **Terraform Cloud** is also a great alternative for collaboration, audit logging, and visibility for recruiters and hiring managers.
+
+---
+
+### 🧠 Subnetting Refresher + VPC IaC
+
+You can refer to:
+
+- 📄 [`docs/Quick Subnetting Refresher (For Cloud Engineers).md`](https://chatgpt.com/c/docs/Quick%20Subnetting%20Refresher%20\(For%20Cloud%20Engineers\).md) for binary subnetting concepts
+    
+- 🧱 [`cloudinfra/modules/vpc/`](https://chatgpt.com/c/cloudinfra/modules/vpc/) for the modular Terraform code that defines:
+    
+    - Public and private subnets
+        
+    - Route tables and associations
+        
+    - NAT and Internet Gateways
+        
+
+---
+
+### 📁 Folder Structure
+
+```plaintext
+cloud-infra-bootstrapping/
+├── README.md
+├── docs/
+│   ├── aws-cli-setup.md
+│   └── Quick Subnetting Refresher (For Cloud Engineers).md
+├── cloudinfra/
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── local.tf
+│   ├── outputs.tf
+│   ├── terraform.tf         # Will define S3 + DynamoDB backend here
+│   └── modules/
+│       └── vpc/
+│           ├── main.tf
+│           ├── output.tf
+│           └── variables.tf
+└── hold.tf                  # (placeholder for later use)
+```
+
+Let me know if you'd like this inserted into your actual `README.md` file — or if you'd like help integrating the backend config block!
