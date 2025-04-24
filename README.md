@@ -14,3 +14,4 @@
 | Management | Root account, billing, SCPs       |
 | Dev        | All non-prod resources & testing  |
 | Prod       | Critical workloads (future setup) |
+ 
