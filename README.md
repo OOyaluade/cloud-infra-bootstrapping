@@ -1,6 +1,6 @@
 # 📌 [AWS CLI & IAM Setup](https://github.com/OOyaluade/cloud-infra-bootstrapping/tree/main/docs)
 
-> ✉️ For full configuration steps, see [`docs/aws-cli-setup.md`](URL)
+> ✉️ For full configuration steps, see [`docs/aws-cli-setup.md`](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/aws-cli-setup.md.md))
 
 ---
 
@@ -26,9 +26,9 @@
 
 You can refer to:
 
-- 📄 [`docs/Quick Subnetting Refresher (For Cloud Engineers).md`](https://chatgpt.com/c/docs/Quick%20Subnetting%20Refresher%20\(For%20Cloud%20Engineers\).md) for binary subnetting concepts
+- 📄 [`docs/Quick Subnetting Refresher (For Cloud Engineers).md`](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Quick%20Subnetting%20Refresher%20\(For%20Cloud%20Engineers\).md)for binary subnetting concepts
     
-- 🧱 [`cloudinfra/modules/vpc/`](https://chatgpt.com/c/cloudinfra/modules/vpc/) for the modular Terraform code that defines:
+- 🧱 [`cloudinfra/modules/vpc/`][cloud-infra-bootstrapping/cloudinfra at main · OOyaluade/cloud-infra-bootstrapping](https://github.com/OOyaluade/cloud-infra-bootstrapping/tree/main/cloudinfra) for the modular Terraform code that defines:
     
     - Public and private subnets
         
