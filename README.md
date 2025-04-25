@@ -28,7 +28,7 @@ You can refer to:
 
 - 📄 [`docs/Quick Subnetting Refresher (For Cloud Engineers).md`](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Quick%20Subnetting%20Refresher%20\(For%20Cloud%20Engineers\).md)for binary subnetting concepts
     
-- 🧱 [`02cloudinfra/modules/vpc/`](https://github.com/OOyaluade/cloud-infra-bootstrapping/tree/main/cloudinfra) for the modular Terraform code that defines:
+- 🧱 [`02 cloudinfra/modules/vpc/`](https://github.com/OOyaluade/cloud-infra-bootstrapping/tree/main/02%20cloudinfra) for the modular Terraform code that defines:
     
     - Public and private subnets
         
