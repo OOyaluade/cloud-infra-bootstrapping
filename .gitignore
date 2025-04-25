@@ -42,3 +42,21 @@ terraform.rc
 
 /venv
 ./venv
+
+# Node.js
+node_modules/
+
+# Husky internal temp files
+.husky/_/
+
+# Terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+# VS Code settings (if using VS Code)
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db

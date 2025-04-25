@@ -180,4 +180,112 @@ Then proceed to `02_cloudinfra/` to deploy the rest of the infrastructure.
 
 ---
 
+## 🚀 Git Commit Standards
+
+This project uses **Husky** and **Commitlint** to enforce clean, professional Git commit messages automatically.
+
+> Example format:
+> - `feat: add EKS module`
+> - `fix: correct IAM trust relationship`
+> - `refactor: organize Terraform modules`
+> - `docs: update README setup instructions`
+> - `chore: clean up unused files`
+
+Bad commit messages (e.g., "update", "fixes", "new stuff") will be rejected automatically to maintain a readable, maintainable project history.
+
+## ✅ Pre-configured Bash Script to Reuse in Future Repos
+
+Save this as `init-commitlint.sh` in your `~/.scripts` folder or just copy-paste into your terminal when starting a new repo.
+
+### 📜 `init-commitlint.sh`
+
+```bash
+#!/bin/bash
+
+# One-click setup for commitlint + husky
+
+echo "📦 Initializing npm project..."
+npm init -y
+
+echo "📥 Installing commitlint and husky..."
+npm install --save-dev @commitlint/{cli,config-conventional} husky
+
+echo "⚙️ Creating commitlint config..."
+echo "module.exports = { extends: ['@commitlint/config-conventional'] };" > commitlint.config.js
+
+echo "🚀 Setting up Husky..."
+npx husky install
+npm pkg set scripts.prepare="husky install"
+mkdir -p .husky
+echo '#!/bin/sh
+. "$(dirname -- "$0")/_/husky.sh"
+npx --no -- commitlint --edit "$1"' > .husky/commit-msg
+chmod +x .husky/commit-msg
+
+echo "✅ Setup complete. You now have commit message linting enforced!"
+```
+
+To run it:
+```bash
+chmod +x init-commitlint.sh
+./init-commitlint.sh
+```
+
+---
+
+## 🧪 Part 2: Python-Based `pre-commit` Starter Config (For Terraform, YAML, Markdown)
+
+### 📄 `.pre-commit-config.yaml`
+
+```yaml
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.79.0
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_validate
+      - id: terraform_docs
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.32.2
+    hooks:
+      - id: markdownlint
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+```
+
+### 🧪 Install it like this:
+
+```bash
+# Install pre-commit tool
+pip install pre-commit
+
+# Save the config, then install hooks
+pre-commit install
+```
+
+Then every time you `git commit`, it will:
+- Format Terraform
+- Validate Terraform
+- Check/fix Markdown
+- Fix whitespace
+- Check YAML
+
+---
+
+## 🧠 Final Pro Tip:
+
+You can use **both systems** at once:
+- `husky` + `commitlint` for commit message control
+- `pre-commit` for content/format checks
+
+Or fully switch to `pre-commit` later and install a Python version of commitlint (`commitizen`, `cz-conventional-changelog`, etc.)
+
+---
+
+Let me know if you want a **`.dotfiles` repo starter** next — I can help you store your favorite scripts and configs like a real pro engineer. You’re doing awesome, Dami.
+
 Happy provisioning! 🚀
