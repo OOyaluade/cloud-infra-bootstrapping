@@ -59,7 +59,7 @@ A complete guide for provisioning this infrastructure with Terraform, including 
 
 #### ✅ Solution: Manual or Bootstrap Step
 
-Before you can deploy the rest of the infrastructure (`02 cloudinfra`), you must **manually create** or **bootstrap** the following resources:
+Before you can deploy the rest of the infrastructure (`02_cloudinfra`), you must **manually create** or **bootstrap** the following resources:
 
 | Resource       | Example Name        | Purpose                               |
 | -------------- | ------------------- | ------------------------------------- |
@@ -81,7 +81,7 @@ aws dynamodb create-table \
 
 Alternatively, you can:
 
-- Use a **separate Terraform config** (`01_terraform_s3_state_file/`) _without_ a backend block
+- Use a **separate Terraform config** (`01_bootstrap_backend/`) _without_ a backend block
     
 - Run `terraform init && terraform apply` to provision backend resources
     
@@ -98,7 +98,7 @@ You can refer to:
 
 - 📄 [`docs/Quick Subnetting Refresher (For Cloud Engineers).md`](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Quick%20Subnetting%20Refresher%20\(For%20Cloud%20Engineers\).md) for binary subnetting concepts
     
-- 🧱 [`02 cloudinfra/modules/vpc/`](https://github.com/OOyaluade/cloud-infra-bootstrapping/tree/main/02%20cloudinfra) for the modular Terraform code that defines:
+- 🧱 [`02_cloudinfra/modules/vpc/`](https://github.com/OOyaluade/cloud-infra-bootstrapping/tree/main/02_core_infra/modules/vpc) for the modular Terraform code that defines:
     
     - Public and private subnets
         
@@ -111,27 +111,48 @@ You can refer to:
 
 ### 📁 Folder Structure
 
-```plaintext
 cloud-infra-bootstrapping/
 ├── README.md
 ├── docs/
 │   ├── aws-cli-setup.md
-│   └── Quick Subnetting Refresher (For Cloud Engineers).md
-├── 01_terraform_s3_state_file/
-│   ├── main.tf
-│   └── variables.tf
-├── 02_cloudinfra/
-│   ├── local.tf
-│   ├── main.tf
+│   ├── resource-provisioning-guide.md
+│   └── quick-subnetting-refresher.md
+├── 01_bootstrap_backend/
+│   ├── main.tf         # Create S3 bucket, DynamoDB table manually or first
 │   ├── variables.tf
+├── 02_core_infra/
+│   ├── main.tf         # Pulls modules together
 │   ├── outputs.tf
-│   ├── terraform.tf
+│   ├── variables.tf
+│   ├── terraform.tf    # Remote backend definition
+│   ├── locals.tf       # (Optional but recommended for DRY config)
 │   └── modules/
-│       └── vpc/
+│       ├── vpc/
+│       │   ├── main.tf
+│       │   ├── outputs.tf
+│       │   └── variables.tf
+│       ├── iam/
+│       │   ├── dev_policies.tf
+│       │   ├── ml_policies.tf
+│       │   ├── prod_policies.tf
+│       │   ├── audit_policies.tf
+│       │   ├── scp.tf
+│       │   ├── outputs.tf
+│       │   └── variables.tf
+│       ├── rds/
+│       │   ├── main.tf
+│       │   ├── outputs.tf
+│       │   └── variables.tf
+│       ├── eks/
+│       │   ├── main.tf
+│       │   ├── node_groups.tf
+│       │   ├── outputs.tf
+│       │   └── variables.tf
+│       └── observability/
 │           ├── main.tf
-│           ├── output.tf
+│           ├── grafana_config.tf
+│           ├── outputs.tf
 │           └── variables.tf
-```
 
 > 🔁 **Pro Tip:** Use `git prune` periodically to clean up unreachable loose objects if you encounter Git warnings during local development.
 
@@ -139,7 +160,7 @@ cloud-infra-bootstrapping/
 
 ### 📌 Recommendations
 
-✅ Start with `01_terraform_s3_state_file/` to bootstrap the backend. This makes it easy to:
+✅ Start with `01_bootstrap_backend/` to bootstrap the backend. This makes it easy to:
 
 - Track the creation of state storage infrastructure
     
