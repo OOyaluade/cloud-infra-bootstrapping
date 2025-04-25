@@ -32,23 +32,19 @@ Their product suite includes telehealth apps, predictive analytics tools, and AI
 
 ### *CareMesh Health* Progress & Roadmap
 
-| Status         | Task                                                                   |
-| -------------- | ---------------------------------------------------------------------- |
-| ✅ Completed    | Modular VPC Layout created with public/private subnets, and IGW        |
-| ✅ Completed    | Terraform Backend Setup with S3 state & DynamoDB lock                  |
-| ✅ Completed    | S3 Bucket Module for versioned, encrypted storage                      |
-| 🚧 In Progress | IAM Policies & SCPs for access separation (Dev, ML, Prod, Audit)       |
-| 🚧 In Progress | Terraform Documentation & CLI Bootstrap Guide (continuous improvement) |
-| 🔜 Upcoming    | Multi-Account AWS Organization setup                                   |
-| 🔜 Upcoming    | Secure Networking for app and data layers                              |
-| 🔜 Upcoming    | RDS Deployment with private subnet access & secrets handling           |
-| 🔜 Upcoming    | EKS Cluster Provisioning with Terraform + OIDC support                 |
-| 🔜 Upcoming    | CI/CD Pipelines via GitHub Actions (for apps & ML models)              |
-| 🔜 Upcoming    | ML Workflow Setup with MLflow + FastAPI model serving                  |
-| 🔜 Upcoming    | Observability Stack: CloudWatch, Prometheus, Grafana, and alerting     |
-| 🔜 Upcoming    | Zero-Downtime Deployments using Kubernetes deployment strategies       |
-| 🔜 Upcoming    | Model Monitoring & Drift Detection in production environments          |
-
+| Step | Module                                         | Status         |
+| ---- | ---------------------------------------------- | -------------- |
+| 1    | Backend Bootstrap (S3, DynamoDB)               | ✅ Completed    |
+| 2    | Modular VPC Deployment                         | ✅ Completed    |
+| 3    | IAM Policies + SCPs Setup                      | 🚧 In Progress |
+| 4    | Secure Networking (Subnets, NAT, Route Tables) | 🔜 Upcoming    |
+| 5    | RDS Database Setup (Private Subnets)           | 🔜 Upcoming    |
+| 6    | EKS Cluster Creation (w/ OIDC)                 | 🔜 Upcoming    |
+| 7    | Flask App Deployment (EC2 → EKS)               | 🔜 Upcoming    |
+| 8    | Observability Stack (Grafana, Prometheus)      | 🔜 Upcoming    |
+| 9    | Model Training + Deployment (MLflow)           | 🔜 Upcoming    |
+| 10   | CI/CD Pipelines for Apps & Models              | 🔜 Upcoming    |
+| 11   | Monitoring + Drift Detection                   | 🔜 Upcoming    |
 ###  [Resource Provisioning Guide](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Resource%20Provisioning%20Guide.md)
 A complete guide for provisioning this infrastructure with Terraform, including backend initialization, resource deployment, and backend state migration [available here](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Resource%20Provisioning%20Guide.md). If you feel confident, skip the above and continue with the details below. 
 
