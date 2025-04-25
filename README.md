@@ -125,34 +125,34 @@ cloud-infra-bootstrapping/
 │   ├── outputs.tf
 │   ├── variables.tf
 │   ├── terraform.tf    # Remote backend definition
-│   ├── locals.tf       # (Optional but recommended for DRY config)
-│   └── modules/
-│       ├── vpc/
-│       │   ├── main.tf
-│       │   ├── outputs.tf
-│       │   └── variables.tf
-│       ├── iam/
-│       │   ├── dev_policies.tf
-│       │   ├── ml_policies.tf
-│       │   ├── prod_policies.tf
-│       │   ├── audit_policies.tf
-│       │   ├── scp.tf
-│       │   ├── outputs.tf
-│       │   └── variables.tf
-│       ├── rds/
-│       │   ├── main.tf
-│       │   ├── outputs.tf
-│       │   └── variables.tf
-│       ├── eks/
-│       │   ├── main.tf
-│       │   ├── node_groups.tf
-│       │   ├── outputs.tf
-│       │   └── variables.tf
-│       └── observability/
-│           ├── main.tf
-│           ├── grafana_config.tf
-│           ├── outputs.tf
-│           └── variables.tf
+│   └── locals.tf       # (Optional but recommended for DRY config)
+├── 03_ modules/
+│   ├── vpc/
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── iam/
+│   │   ├── dev_policies.tf
+│   │   ├── ml_policies.tf
+│   │   ├── prod_policies.tf
+│   │   ├── audit_policies.tf
+│   │   ├── scp.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── rds/
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── eks/
+│   │   ├── main.tf
+│   │   ├── node_groups.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   └── observability/
+│       ├── main.tf
+│       ├── grafana_config.tf
+│       ├── outputs.tf
+│       └── variables.tf
 
 > 🔁 **Pro Tip:** Use `git prune` periodically to clean up unreachable loose objects if you encounter Git warnings during local development.
 
