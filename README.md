@@ -3,24 +3,12 @@
 > ✉️ For full configuration steps, see [`docs/AWSCLI-setup`](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/awscli-setup.md))
 
 ---
-A complete guide for provisioning infrastructure with Terraform, including backend initialization, resource deployment, and backend state migration [available here]().
-###  ![[Resource Provisioning Guide#📦 Prerequisites]]
-
-### 🏛️ Account Design (Planned Structure)
-
-|Account|Purpose|
-|---|---|
-|**Management**|Root account, billing, SCPs|
-|**Dev**|All non-prod resources & testing|
-|**Prod**|Critical workloads (future setup)|
-
----
-
-### 🗃️ Terraform Backend Setup (S3 + DynamoDB)
-
+###  [Resource Provisioning Guide](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Resource%20Provisioning%20Guide.md)
+A complete guide for provisioning this infrastructure with Terraform, including backend initialization, resource deployment, and backend state migration [available here](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Resource%20Provisioning%20Guide.md).
 > [!IMPORTANT]  
 > Terraform requires that the **S3 bucket** (for storing the state file) and the **DynamoDB table** (for state locking) already exist before initializing the backend.  
 > This creates a _“chicken-and-egg” problem_ because you can’t create them using Terraform if Terraform itself hasn’t been initialized yet.
+---
 
 #### ✅ Solution: Manual or Bootstrap Step
 
@@ -112,6 +100,16 @@ cloud-infra-bootstrapping/
     
 
 Then proceed to `02_cloudinfra/` to deploy the rest of the infrastructure.
+
+---
+
+### 🏛️ Account Design (Planned Structure)
+---
+|Account|Purpose|
+|---|---|
+|**Management**|Root account, billing, SCPs|
+|**Dev**|All non-prod resources & testing|
+|**Prod**|Critical workloads (future setup)|
 
 ---
 
