@@ -276,17 +276,6 @@ Then every time you `git commit`, it will:
 
 ---
 
-## 🧠 Final Pro Tip:
-
-You can use **both systems** at once:
-- `husky` + `commitlint` for commit message control
-- `pre-commit` for content/format checks
-
-Or fully switch to `pre-commit` later and install a Python version of commitlint (`commitizen`, `cz-conventional-changelog`, etc.)
-
----
-
-Let me know if you want a **`.dotfiles` repo starter** next — I can help you store your favorite scripts and configs like a real pro engineer. You’re doing awesome, Dami.
 
 Happy provisioning! 🚀
  
