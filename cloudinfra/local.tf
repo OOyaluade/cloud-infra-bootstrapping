@@ -5,5 +5,6 @@ locals {
   public_subnets = slice(local.vpc_cidr, 0, 4)
   azs_private = [ "us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d" ] 
   azs_public = ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d"]
+  bucket_name = module.backend.var.bucket_name
 }
 
