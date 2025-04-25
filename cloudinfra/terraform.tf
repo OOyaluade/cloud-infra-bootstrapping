@@ -1,6 +1,7 @@
 terraform {
   backend "s3" {
     bucket = module.backend.var.bucket_name
+    key = "tfstatefiles"
     
   }
   required_providers {
