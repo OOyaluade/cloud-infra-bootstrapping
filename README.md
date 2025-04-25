@@ -110,7 +110,7 @@ You can refer to:
 ---
 
 ### 📁 Folder Structure
-
+```shell
 cloud-infra-bootstrapping/
 ├── README.md
 ├── docs/
@@ -118,14 +118,14 @@ cloud-infra-bootstrapping/
 │   ├── resource-provisioning-guide.md
 │   └── quick-subnetting-refresher.md
 ├── 01_bootstrap_backend/
-│   ├── main.tf         # Create S3 bucket, DynamoDB table manually or first
+│   ├── main.tf         
 │   ├── variables.tf
 ├── 02_core_infra/
-│   ├── main.tf         # Pulls modules together
+│   ├── main.tf         
 │   ├── outputs.tf
 │   ├── variables.tf
-│   ├── terraform.tf    # Remote backend definition
-│   └── locals.tf       # (Optional but recommended for DRY config)
+│   ├── terraform.tf    
+│   └── locals.tf      
 └── 03_ modules/
     ├── vpc/
     │   ├── main.tf
@@ -153,11 +153,11 @@ cloud-infra-bootstrapping/
         ├── grafana_config.tf
         ├── outputs.tf
         └── variables.tf
+```
 
 > 🔁 **Pro Tip:** Use `git prune` periodically to clean up unreachable loose objects if you encounter Git warnings during local development.
 
 ---
-
 ### 📌 Recommendations
 
 ✅ Start with `01_bootstrap_backend/` to bootstrap the backend. This makes it easy to:
@@ -170,7 +170,6 @@ cloud-infra-bootstrapping/
 Then proceed to `02_cloudinfra/` to deploy the rest of the infrastructure.
 
 ---
-
 ### 🏛️ Account Design (Planned Structure)
 ---
 |Account|Purpose|
