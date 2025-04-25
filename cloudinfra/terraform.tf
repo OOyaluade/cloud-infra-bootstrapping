@@ -1,7 +1,8 @@
 terraform {
   backend "s3" {
-    bucket = local.bucket_name
+    bucket = "caremesh-tf-2723"
     key = "tfstatefiles"
+    region = "us-east-1"
     
   }
   required_providers {
