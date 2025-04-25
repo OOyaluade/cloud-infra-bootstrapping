@@ -1,10 +1,61 @@
 # 📌 AWS CLI & IAM Setup
+## 🏥 Cloud Infra Bootstrapping for Healthcare Startup
+
+This repository is the landing site. Links to provisioning secure and scalable AWS infrastructure using Terraform in a sequential manner are found in the table bellow.  
+These links bootstraps everything from IAM to VPC networking to EKS; E.T.C — powering a regulated, fast-moving healthcare SaaS.
+
+---
+
+## 🧠 Enterprise Scenario: *CareMesh Health*
+
+**CareMesh Health** is expanding from a monolithic, single-account AWS setup into a secure multi-account, multi-region architecture.  
+Their product suite includes telehealth apps, predictive analytics tools, and AI-powered services — all of which must run on scalable, compliant infrastructure.
+
+### 👩‍⚕️ Core Business Needs:
+- HIPAA-compliant data storage & processing
+- CI/CD pipelines for rapid deployment of patient-facing web apps and ML services
+- A scalable architecture to support predictive analytics (e.g., patient no-shows, risk scoring)
+- Team-based access separation: Dev, ML, Security, Compliance, and Production
+- Cost transparency and control across business units
+
+### 🌐 Cloud Infrastructure Goals:
+1. **Multi-Account AWS Org** to isolate environments
+2. **Terraform Modules** for repeatable networking and services
+3. **EKS for App & ML Workloads** with GitHub Actions CI/CD
+4. **Centralized Logging & Monitoring** for operations and incident response
+5. **S3 + RDS + DynamoDB** as core data services
+6. **MLflow + FastAPI + Prometheus/Grafana** stack for machine learning operations
+7. **KMS, IAM SCPs, and GuardDuty** for security
+
+## 🔧 [Cloud Infrastructure Bootstrapping](https://github.com/OOyaluade/cloud-infra-bootstrapping)
+
+
+### *CareMesh Health* Progress & Roadmap
+
+| Status         | Task                                                                   |
+| -------------- | ---------------------------------------------------------------------- |
+| ✅ Completed    | Modular VPC Layout created with public/private subnets, and IGW        |
+| ✅ Completed    | Terraform Backend Setup with S3 state & DynamoDB lock                  |
+| ✅ Completed    | S3 Bucket Module for versioned, encrypted storage                      |
+| 🚧 In Progress | IAM Policies & SCPs for access separation (Dev, ML, Prod, Audit)       |
+| 🚧 In Progress | Terraform Documentation & CLI Bootstrap Guide (continuous improvement) |
+| 🔜 Upcoming    | Multi-Account AWS Organization setup                                   |
+| 🔜 Upcoming    | Secure Networking for app and data layers                              |
+| 🔜 Upcoming    | RDS Deployment with private subnet access & secrets handling           |
+| 🔜 Upcoming    | EKS Cluster Provisioning with Terraform + OIDC support                 |
+| 🔜 Upcoming    | CI/CD Pipelines via GitHub Actions (for apps & ML models)              |
+| 🔜 Upcoming    | ML Workflow Setup with MLflow + FastAPI model serving                  |
+| 🔜 Upcoming    | Observability Stack: CloudWatch, Prometheus, Grafana, and alerting     |
+| 🔜 Upcoming    | Zero-Downtime Deployments using Kubernetes deployment strategies       |
+| 🔜 Upcoming    | Model Monitoring & Drift Detection in production environments          |
+
+###  [Resource Provisioning Guide](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Resource%20Provisioning%20Guide.md)
+A complete guide for provisioning this infrastructure with Terraform, including backend initialization, resource deployment, and backend state migration [available here](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Resource%20Provisioning%20Guide.md). If you feel confident, skip the above and continue with the details below. 
 
 > ✉️ For full configuration steps, see [`docs/AWSCLI-setup`](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/awscli-setup.md))
 
 ---
-###  [Resource Provisioning Guide](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Resource%20Provisioning%20Guide.md)
-A complete guide for provisioning this infrastructure with Terraform, including backend initialization, resource deployment, and backend state migration [available here](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Resource%20Provisioning%20Guide.md). If you feel confident, skip the above and continue with the details below. 
+
 > [!IMPORTANT]  
 > Terraform requires that the **S3 bucket** (for storing the state file) and the **DynamoDB table** (for state locking) already exist before initializing the backend.  
 > This creates a _“chicken-and-egg” problem_ because you can’t create them using Terraform if Terraform itself hasn’t been initialized yet.
@@ -14,10 +65,10 @@ A complete guide for provisioning this infrastructure with Terraform, including 
 
 Before you can deploy the rest of the infrastructure (`02 cloudinfra`), you must **manually create** or **bootstrap** the following resources:
 
-|Resource|Example Name|Purpose|
-|---|---|---|
-|S3 Bucket|`caremesh-tf-2723`|Store Terraform state|
-|DynamoDB Table|`caremesh-tf-locks`|Lock state to prevent race conditions|
+| Resource       | Example Name        | Purpose                               |
+| -------------- | ------------------- | ------------------------------------- |
+| S3 Bucket      | `caremesh-tf-2723`  | Store Terraform state                 |
+| DynamoDB Table | `caremesh-tf-locks` | Lock state to prevent race conditions |
 
 ```bash
 # Create S3 bucket
