@@ -1,8 +1,15 @@
 # 📌 AWS CLI & IAM Setup
-## 🏥 Cloud Infra Bootstrapping for Healthcare Startup
+# 🏥 Cloud Infra Bootstrapping for Healthcare Startup
 
-This repository is the landing site. Links to provisioning secure and scalable AWS infrastructure using Terraform in a sequential manner are found in the table bellow.  
-These links bootstraps everything from IAM to VPC networking to EKS; E.T.C — powering a regulated, fast-moving healthcare SaaS.
+
+> **CareMesh Health Bootstrapping provides a ready-to-deploy, secure, and scalable AWS infrastructure for healthcare and ML SaaS startups.**
+>
+> **Launch fast, scale securely, and allow experts to customize later — without blocking early progress.**
+
+
+This project bootstraps a **production-ready cloud platform** designed for **healthcare SaaS applications, machine learning workflows, and enterprise observability.**
+
+Originally built for the fictional company **CareMesh Health**, this platform simulates real-world AWS cloud infrastructure needs for fast-growing SaaS and ML-driven healthcare companies.
 
 ---
 
@@ -32,19 +39,20 @@ Their product suite includes telehealth apps, predictive analytics tools, and AI
 
 ### *CareMesh Health* Progress & Roadmap
 
-| Step | Module                                         | Status         |
-| ---- | ---------------------------------------------- | -------------- |
-| 1    | Backend Bootstrap (S3, DynamoDB)               | ✅ Completed    |
-| 2    | Modular VPC Deployment                         | ✅ Completed    |
-| 3    | IAM Policies + SCPs Setup                      | 🚧 In Progress |
-| 4    | Secure Networking (Subnets, NAT, Route Tables) | 🔜 Upcoming    |
-| 5    | RDS Database Setup (Private Subnets)           | 🔜 Upcoming    |
-| 6    | EKS Cluster Creation (w/ OIDC)                 | 🔜 Upcoming    |
-| 7    | Flask App Deployment (EC2 → EKS)               | 🔜 Upcoming    |
-| 8    | Observability Stack (Grafana, Prometheus)      | 🔜 Upcoming    |
-| 9    | Model Training + Deployment (MLflow)           | 🔜 Upcoming    |
-| 10   | CI/CD Pipelines for Apps & Models              | 🔜 Upcoming    |
-| 11   | Monitoring + Drift Detection                   | 🔜 Upcoming    |
+| Step | Module                                           | Status         |
+| ---- | ------------------------------------------------ | -------------- |
+| 1    | Backend Bootstrap (S3, DynamoDB)                 | ✅ Completed    |
+| 2    | Modular VPC Deployment                           | ✅ Completed    |
+| 3    | IAM Policies + SCPs Setup                        | 🚧 In Progress |
+| 4    | Secure Networking (Subnets, NAT, Route Tables)   | 🔜 Upcoming    |
+| 5    | Account Vending Machine                          | 🔜 Upcoming    |
+| 6    | RDS Database Setup (Private Subnets)             | 🔜 Upcoming    |
+| 7    | EKS Cluster Creation (w/ OIDC, GPU Nodes for ML) | 🔜 Upcoming    |
+| 8    | Flask App Deployment (EC2 → EKS)                 | 🔜 Upcoming    |
+| 9    | Observability Stack (Grafana, Prometheus)        | 🔜 Upcoming    |
+| 10   | Model Training + Deployment (MLflow)             | 🔜 Upcoming    |
+| 11   | CI/CD Pipelines for Apps & Models                | 🔜 Upcoming    |
+| 12   | Monitoring + Drift Detection                     | 🔜 Upcoming    |
 ###  [Resource Provisioning Guide](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Resource%20Provisioning%20Guide.md)
 A complete guide for provisioning this infrastructure with Terraform, including backend initialization, resource deployment, and backend state migration [available here](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Resource%20Provisioning%20Guide.md). If you feel confident, skip the above and continue with the details below. 
 
