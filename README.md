@@ -40,7 +40,7 @@ Their product suite includes telehealth apps, predictive analytics tools, and AI
 ### *CareMesh Health* Progress & Roadmap
 
 > [Note!!!] : While you are programatically able to create new AWS accounts using Terraform, programatic deletion like `terraform destroy ` will fail to remove both new and existing account. Ensure that before you apply, you/team members have access to the email addresse/s for the account/s you plan to create.
- 
+
 
 | Step | Module                                           | Status         |
 | ---- | ------------------------------------------------ | -------------- |
@@ -93,7 +93,6 @@ aws dynamodb create-table \
 Alternatively, you can:
 
 - Use a **separate Terraform config** (`01_bootstrap_backend/`) _without_ a backend block
-    
 - Run `terraform init && terraform apply` to provision backend resources
     
 - Then enable remote backend in `02_cloudinfra` using `terraform init -migrate-state`
@@ -122,48 +121,41 @@ You can refer to:
 
 ### 📁 Folder Structure
 ```shell
+
 cloud-infra-bootstrapping/
-├── README.md
-├── docs/
-│   ├── aws-cli-setup.md
-│   ├── resource-provisioning-guide.md
-│   └── quick-subnetting-refresher.md
-├── 01_bootstrap_backend/
-│   ├── main.tf         
-│   ├── variables.tf
-├── 02_core_infra/
-│   ├── main.tf         
-│   ├── outputs.tf
-│   ├── variables.tf
-│   ├── terraform.tf    
-│   └── locals.tf      
-└── 03_ modules/
-    ├── vpc/
-    │   ├── main.tf
-    │   ├── outputs.tf
-    │   └── variables.tf
-    ├── iam/
-    │   ├── dev_policies.tf
-    │   ├── ml_policies.tf
-    │   ├── prod_policies.tf
-    │   ├── audit_policies.tf
-    │   ├── scp.tf
-    │   ├── outputs.tf
-    │   └── variables.tf
-    ├── rds/
-    │   ├── main.tf
-    │   ├── outputs.tf
-    │   └── variables.tf
-    ├── eks/
-    │   ├── main.tf
-    │   ├── node_groups.tf
-    │   ├── outputs.tf
-    │   └── variables.tf
-    └── observability/
-        ├── main.tf
-        ├── grafana_config.tf
-        ├── outputs.tf
-        └── variables.tf
+├── 01_bootstrap_backend
+│   ├── main.tf
+│   ├── terraform.tf
+│   └── variables.tf
+├── 02_core_infra
+│   ├── local.tf
+│   ├── main.tf
+│   ├── outputs.tf
+│   ├── terraform.tf
+│   └── variables.tf
+├── 03_modules
+│   ├── org_structure
+│   │   ├── locals.tf
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   ├── terraform.tfstate
+│   │   ├── terraform.tfstate.backup
+│   │   └── variables.tf
+│   └── vpc
+│       ├── main.tf
+│       ├── output.tf
+│       └── variables.tf
+├── commitlint.config.js
+├── CONTRIBUTING.MD
+├── docs
+│   ├── AWS-CLI setup.md
+│   ├── Quick Subnetting Refresher (For Cloud Engineers).md
+│   └── Resource Provisioning Guide.md
+├── init-commitlint.sh
+├── LICENSE
+├── package.json
+├── package-lock.json
+└── README.md
 ```
 
 > 🔁 **Pro Tip:** Use `git prune` periodically to clean up unreachable loose objects if you encounter Git warnings during local development.
