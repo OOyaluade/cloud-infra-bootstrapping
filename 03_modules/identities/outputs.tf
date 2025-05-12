@@ -4,4 +4,4 @@ output "local_values" {
     developer_email = local.developer_account_email
   }
 
-}
+} 
