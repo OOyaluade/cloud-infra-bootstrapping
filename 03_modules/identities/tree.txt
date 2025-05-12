@@ -1,0 +1,34 @@
+../../../cloud-infra-bootstrapping/
+├── 01_bootstrap_backend
+│   ├── main.tf
+│   ├── terraform.tf
+│   └── variables.tf
+├── 02_core_infra
+│   ├── local.tf
+│   ├── main.tf
+│   ├── outputs.tf
+│   ├── terraform.tf
+│   └── variables.tf
+├── 03_modules
+│   ├── identities
+│   │   ├── locals.tf
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   ├── tree.txt
+│   │   └── variables.tf
+│   └── vpc
+│       ├── main.tf
+│       ├── output.tf
+│       └── variables.tf
+├── commitlint.config.js
+├── CONTRIBUTING.MD
+├── docs
+│   ├── AWS-CLI setup.md
+│   ├── Quick Subnetting Refresher (For Cloud Engineers).md
+│   └── Resource Provisioning Guide.md
+├── LICENSE
+├── package.json
+├── package-lock.json
+└── README.md
+
+7 directories, 25 files
