@@ -39,6 +39,9 @@ Their product suite includes telehealth apps, predictive analytics tools, and AI
 
 ### *CareMesh Health* Progress & Roadmap
 
+> [Note!!!] : While you are programatically able to create new AWS accounts using Terraform, programatic deletion like `terraform destroy ` will fail to remove both new and existing account. Ensure that before you apply, you/team members have access to the email addresse/s for the account/s you plan to create.
+ 
+
 | Step | Module                                           | Status         |
 | ---- | ------------------------------------------------ | -------------- |
 | 1    | Backend Bootstrap (S3, DynamoDB)                 | ✅ Completed    |
