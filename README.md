@@ -12,7 +12,7 @@ Originally built for the fictional company **CareMesh Health**, this platform si
 
 ---
 
-## 🧼 Linting & Commit Standards Setup
+## 🩼 Linting & Commit Standards Setup
 
 To enforce consistent formatting and commit hygiene across Terraform, Markdown, YAML, and Git messages, this project includes a setup script:
 
@@ -28,6 +28,7 @@ This script configures:
   * Terraform formatting and validation
   * Markdown and YAML linting
   * Trailing whitespace and EOF consistency
+* ✅ Uses `nvm` and Python `venv` (if available) for isolated environments
 
 Once configured, every commit will be auto-validated to ensure clean, professional standards.
 
@@ -68,7 +69,7 @@ Their product suite includes telehealth apps, predictive analytics tools, and AI
 | ---- | ------------------------------------------------ | -------------- |
 | 1    | Backend Bootstrap (S3, DynamoDB)                 | ✅ Completed    |
 | 2    | Modular VPC Deployment                           | ✅ Completed    |
-| 3    | IAM Policies + SCPs Setup                        | 🚧 In Progress |
+| 3    | IAM Policies + SCPs Setup                        | ⚠️ In Progress |
 | 4    | Secure Networking (Subnets, NAT, Route Tables)   | 🔜 Upcoming    |
 | 5    | Account Vending Machine                          | 🔜 Upcoming    |
 | 6    | RDS Database Setup (Private Subnets)             | 🔜 Upcoming    |
@@ -192,15 +193,15 @@ Then proceed to `02_cloudinfra/` to deploy the rest of the infrastructure.
 
 ---
 
-### 🏛️ Account Design (Planned Structure)
+### 🏩 Account Design (Planned Structure)
 
 ---
 
-| Account        | Purpose                           |
-| -------------- | --------------------------------- |
-| **Management** | Root account, billing, SCPs       |
-| **Dev**        | All non-prod resources & testing  |
-| **Prod**       | Critical workloads (future setup) |
-| **MLE**       | Data Science and Machine Learning  |
+| Account        | Purpose                                           |
+| -------------- | ------------------------------------------------- |
+| **Management** | Root account, billing, SCPs                       |
+| **Dev**        | All non-prod resources & testing                  |
+| **MLE / DS**   | Model training, evaluation, critical ML workloads |
+| **Prod**       | Production systems, regulated and external-facing |
 
 ---
