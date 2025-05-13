@@ -1,6 +1,9 @@
 # 📌 AWS CLI & IAM Setup
 
-# 🏥 Cloud Infra Bootstrapping for Healthcare Startup
+# 🏥 Cloud Infra Bootstrapping for Startup in:
+- Healthcare
+- MLE / DS
+- E.T.C
 
 > **CareMesh Health Bootstrapping provides a ready-to-deploy, secure, and scalable AWS infrastructure for healthcare and ML SaaS startups.**
 >
