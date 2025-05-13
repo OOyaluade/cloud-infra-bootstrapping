@@ -10,5 +10,5 @@
 
 
 module "org_structure" {
-  source = "../03_modules/org_structure"
+  source = "../03_modules/02_org_structure"
 }

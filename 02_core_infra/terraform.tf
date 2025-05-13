@@ -4,7 +4,7 @@ terraform {
     key    = "tfstatefiles"
     region = "us-east-1"
 
-    dynamodb_table = "terraform_lock_table"
+    dynamodb_table = "caremesh-tf-locks"
     encrypt        = true
   }
   required_providers {

@@ -20,6 +20,6 @@ variable "lock_table_name" {
 
   description = "The name of the DynamoDB lock table"
   type        = string
-  default     = "terraform_lock_table"
+  default     = "caremesh-tf-locks"
   sensitive   = false
 }
