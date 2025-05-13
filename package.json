@@ -7,8 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "husky install"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -20,10 +19,5 @@
   "bugs": {
     "url": "https://github.com/OOyaluade/cloud-infra-bootstrapping/issues"
   },
-  "homepage": "https://github.com/OOyaluade/cloud-infra-bootstrapping#readme",
-  "devDependencies": {
-    "@commitlint/cli": "^19.8.0",
-    "@commitlint/config-conventional": "^19.8.0",
-    "husky": "^9.1.7"
-  }
+  "homepage": "https://github.com/OOyaluade/cloud-infra-bootstrapping#readme"
 }
