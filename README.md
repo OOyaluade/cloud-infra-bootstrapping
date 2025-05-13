@@ -1,10 +1,13 @@
-# 📌 AWS CLI & IAM Setup
 # 🏥 Cloud Infra Bootstrapping for Healthcare Startup
 
+![Terraform](https://img.shields.io/badge/Terraform-Ready-623CE4?logo=terraform)
+![AWS](https://img.shields.io/badge/AWS-Multi--Account-orange?logo=amazon-aws)
+![License](https://img.shields.io/github/license/OOyaluade/cloud-infra-bootstrapping)
 
 > **CareMesh Health Bootstrapping provides a ready-to-deploy, secure, and scalable AWS infrastructure for healthcare and ML SaaS startups.**
 >
 > **Launch fast, scale securely, and allow experts to customize later — without blocking early progress.**
+
 
 
 This project bootstraps a **production-ready cloud platform** designed for **healthcare SaaS applications, machine learning workflows, and enterprise observability.**
@@ -24,6 +27,14 @@ Their product suite includes telehealth apps, predictive analytics tools, and AI
 - A scalable architecture to support predictive analytics (e.g., patient no-shows, risk scoring)
 - Team-based access separation: Dev, ML, Security, Compliance, and Production
 - Cost transparency and control across business units
+
+## 👥 Who Should Use This?
+
+- **Startup DevOps Engineers** avoiding vendor lock-in with modular IaC
+- **Cloud Architects** exploring secure AWS Org and VPC patterns
+- **ML Engineers** deploying HIPAA-aware model pipelines
+- **Students & Career Switchers** needing real-world infrastructure projects
+
 
 ### 🌐 Cloud Infrastructure Goals:
 1. **Multi-Account AWS Org** to isolate environments
@@ -101,6 +112,13 @@ Alternatively, you can:
 > 💼 **In real enterprise environments**, many teams use [Terraform Cloud](https://www.terraform.io/cloud) or tools like Spacelift or Atlantis for easier collaboration, secure state handling, and CI/CD workflows.
 
 ---
+
+## 🗺️ Architecture Diagram
+
+> Visualizing the core AWS services and modular Terraform relationships.
+
+![Infrastructure Overview](docs/infra-overview.png)
+
 
 ### 🧠 Subnetting Refresher + VPC IaC
 
@@ -182,6 +200,20 @@ Then proceed to `02_cloudinfra/` to deploy the rest of the infrastructure.
 |**Prod**|Critical workloads (future setup)|
 
 ---
+
+## ⚡ Quickstart (For Experienced Users)
+
+```bash
+# 1. Bootstrap state backend
+cd 01_bootstrap_backend
+terraform init && terraform apply
+
+# 2. Provision infrastructure
+cd ../02_core_infra
+terraform init -migrate-state
+terraform apply
+
+
 
 ## 🚀 Git Commit Standards
 
