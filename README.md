@@ -5,11 +5,8 @@
 - MLE / DS
 - E.T.C
 
-> **CareMesh Health Bootstrapping provides a ready-to-deploy, secure, and scalable AWS infrastructure for healthcare and ML SaaS startups.**
->
-> **Launch fast, scale securely, and allow experts to customize later — without blocking early progress.**
 
-This project bootstraps a **production-ready cloud platform** designed for **healthcare SaaS applications, machine learning workflows, and enterprise observability.**
+This project bootstraps a **production-ready cloud platform** designed for **healthcare SaaS applications, machine learning workflows, and enterprise observability with toolings to allow experts to customize later — without blocking early progress.**
 
 Originally built for the fictional company **CareMesh Health**, this platform simulates real-world AWS cloud infrastructure needs for fast-growing SaaS and ML-driven healthcare companies.
 
