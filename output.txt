@@ -1,0 +1,1512 @@
+>>> 01_bootstrap_backend/main.tf
+
+resource "aws_s3_bucket" "tf_state" {
+  bucket = var.bucket_name
+
+  tags = {
+    Name        = var.bucket_name
+    Environment = var.environment
+  }
+}
+
+
+resource "aws_s3_bucket_versioning" "versioning_example" {
+  bucket = aws_s3_bucket.tf_state.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "encryption" {
+  bucket = aws_s3_bucket.tf_state.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_dynamodb_table" "tf_locks" {
+  name         = var.lock_table_name
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "LockID"
+
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
+
+  tags = {
+    Name        = var.lock_table_name
+    Environment = var.environment
+  }
+}
+
+>>> 01_bootstrap_backend/terraform.tf
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "5.95.0"
+    }
+  }
+}
+provider "aws" {
+  region = "us-east-1"
+}
+>>> 01_bootstrap_backend/variables.tf
+variable "bucket_name" {
+
+  description = "The name of the S3 bucket"
+  type        = string
+  default     = "caremesh-tf-2723"
+  sensitive   = false
+
+}
+
+variable "environment" {
+
+  description = "The environment for the deployment"
+  type        = string
+  default     = "development"
+  sensitive   = false
+}
+
+
+variable "lock_table_name" {
+
+  description = "The name of the DynamoDB lock table"
+  type        = string
+  default     = "caremesh-tf-locks"
+  sensitive   = false
+}
+>>> 02_core_infra/locals.tf
+locals {
+  vpc_cidr_block  = "172.16.0.0/16"
+  vpc_cidr        = [for cidr_block in range(8) : cidrsubnet("172.16.0.0/16", 3, cidr_block)]
+  private_subnets = slice(local.vpc_cidr, 4, 8)
+  public_subnets  = slice(local.vpc_cidr, 0, 4)
+  azs_private     = ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d"]
+  azs_public      = ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d"]
+
+}
+
+
+>>> 02_core_infra/main.tf
+# module "vpc" {
+#   source          = "../03_modules/vpc"
+#   vpc_cidr        = local.vpc_cidr_block
+#   private_subnets = local.private_subnets
+#   public_subnets  = local.public_subnets
+#   azs_private     = local.azs_private
+#   azs_public      = local.azs_public
+
+#
+
+
+module "org_structure" {
+  source = "../03_modules/02_org_structure"
+}
+>>> 02_core_infra/outputs.tf
+output "private_subnets" {
+
+  value = local.private_subnets
+}
+output "public_subnets" {
+
+  value = local.public_subnets
+}
+
+
+
+output "vpc_id" {
+  description = "The ID of the VPC"
+  value       = module.vpc.vpc_id
+}
+
+output "public_subnet_ids" {
+  description = "List of public subnet IDs"
+  value       = module.vpc.public_subnet_ids
+}
+
+output "private_subnet_ids" {
+  description = "List of private subnet IDs"
+  value       = module.vpc.private_subnet_ids
+}
+
+
+
+output "organization_account_details" {
+  description = "All organization account details"
+  value = {
+    developer_email = {
+        name = module.developer_account_name
+        email = module.developer_account_email
+      }
+          production_email = {
+        name = module.production_account_name
+        email = module.production_account_email
+      }
+          machine_learning_email = {
+        name = module.machine_learning_account_name
+        email = module.machine_learning_account_email
+      }
+    }
+  }
+
+
+>>> 02_core_infra/terraform.tf
+terraform {
+  backend "s3" {
+    bucket = "caremesh-tf-2723"
+    key    = "tfstatefiles"
+    region = "us-east-1"
+
+    dynamodb_table = "caremesh-tf-locks"
+    encrypt        = true
+  }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "5.95.0"
+    }
+  }
+}
+provider "aws" {
+  region = "us-east-1"
+}
+>>> 02_core_infra/variables.tf
+variable "vpc_cidr" {
+  description = "CIDR block for the VPC"
+  type        = string
+  default     = "172.16.0.0/19"
+
+
+}
+>>> 03_modules/01_org_structure/locals.tf
+locals {
+  developer_account_name         = var.CareMesh_Developers_Account_Name
+  developer_account_email        = var.CareMesh_Developers_Account_Email
+  production_account_name        = var.CareMesh_Production_Account_Name
+  production_account_email       = var.CareMesh_Production_Account_Email
+  machine_learning_account_name  = var.CareMesh_Machine_Learning_Account_Name
+  machine_learning_account_email = var.CareMesh_Machine_Learning_Account_Email
+
+} 
+>>> 03_modules/01_org_structure/main.tf
+resource "aws_organizations_account" "CareMesh_Developers_Account" {
+  name  = local.developer_account_name
+  email = local.developer_account_email
+}
+
+resource "aws_organizations_account" "CareMesh_Production_Account" {
+  name  = local.production_account_name
+  email = local.production_account_email
+}
+
+resource "aws_organizations_account" "CareMesh_Machine_Learning_Account" {
+  name  = local.machine_learning_account_name
+  email = local.machine_learning_account_email
+} 
+>>> 03_modules/01_org_structure/outputs.tf
+output "local_values" {
+  description = "All organization account details"
+  value = {
+    developer_email = {
+        name = local.developer_account_name
+        email = local.developer_account_email
+      }
+          production_email = {
+        name = local.production_account_name
+        email = local.production_account_email
+      }
+          machine_learning_email = {
+        name = local.machine_learning_account_name
+        email = local.machine_learning_account_email
+      }
+    }
+  }
+
+>>> 03_modules/01_org_structure/variables.tf
+variable "CareMesh_Developers_Account_Name" {
+  type    = string
+  default = "CareMesh_Developers"
+}
+
+variable "CareMesh_Developers_Account_Email" {
+  type    = string
+  default = "oyaluadedamilola+c_dev@damilstudio.com"
+  validation {
+    condition     = can(regex("[a-zA-Z._%+-]+@[a-zA-Z._%+-]+\\.[a-zA-Z]{2,}", var.CareMesh_Developers_Account_Email))
+    error_message = "Not a valid email address"
+  }
+
+}
+
+
+variable "CareMesh_Production_Account_Name" {
+  type    = string
+  default = "CareMesh_Production"
+}
+
+variable "CareMesh_Production_Account_Email" {
+  type    = string
+  default = "oyaluadedamilola+c_prod@damilstudio.com"
+  validation {
+    condition     = can(regex("[a-zA-Z._%+-]+@[a-zA-Z._%+-]+\\.[a-zA-Z]{2,}",var.CareMesh_Production_Account_Email))
+    error_message = "Not a valid email address"
+  }
+
+}
+
+
+variable "CareMesh_Machine_Learning_Account_Name" {
+  type    = string
+  default = "CareMesh_Machine_Learning_Engineer"
+}
+
+variable "CareMesh_Machine_Learning_Account_Email" {
+  type    = string
+  default = "oyaluadedamilola+c_mle@damilstudio.com"
+  validation {
+    condition     = can(regex("[a-zA-Z._%+-]+@[a-zA-Z._%+-]+\\.[a-zA-Z]{2,}",var.CareMesh_Machine_Learning_Account_Email))
+    error_message = "Not a valid email address"
+  }
+
+} 
+
+>>> 03_modules/02_iam_roles/locals.tf
+
+>>> 03_modules/02_iam_roles/main.tf
+
+>>> 03_modules/02_iam_roles/outputs.tf
+
+>>> 03_modules/02_iam_roles/terraform.tf
+
+>>> 03_modules/02_iam_roles/variables.tf
+
+>>> 03_modules/vpc/main.tf
+resource "aws_vpc" "main" {
+  cidr_block = var.vpc_cidr
+  enable_dns_support = true
+  enable_dns_hostnames = true
+
+  tags = merge({
+    Name = "caremesh-vpc"
+  }, var.tags)
+}
+
+resource "aws_subnet" "public" {
+  for_each = toset(var.public_subnets)
+
+  vpc_id     = aws_vpc.main.id
+  cidr_block = each.value
+  availability_zone = element(var.azs_public, index(var.public_subnets, each.value))
+  map_public_ip_on_launch = true
+
+  tags = merge({
+    Name = "public-${each.value}"
+  }, var.tags)
+}
+
+resource "aws_subnet" "private" {
+  for_each = toset(var.private_subnets)
+
+  vpc_id     = aws_vpc.main.id
+  cidr_block = each.value
+  availability_zone = element(var.azs_private, index(var.private_subnets, each.value))
+
+  tags = merge({
+    Name = "private-${each.value}"
+  }, var.tags)
+}
+
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.main.id
+
+  tags = merge({
+    Name = "caremesh-igw"
+  }, var.tags)
+}
+
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.gw.id
+  }
+
+  tags = merge({
+    Name = "public-rt"
+  }, var.tags)
+}
+
+resource "aws_route_table_association" "public" {
+  for_each = aws_subnet.public
+
+  subnet_id      = each.value.id
+  route_table_id = aws_route_table.public.id
+}
+
+
+
+>>> 03_modules/vpc/output.tf
+output "vpc_id" {
+  description = "The ID of the VPC"
+  value       = aws_vpc.main.id
+}
+
+output "public_subnet_ids" {
+  description = "List of public subnet IDs"
+  value       = [for s in aws_subnet.public : s.id]
+}
+
+output "private_subnet_ids" {
+  description = "List of private subnet IDs"
+  value       = [for s in aws_subnet.private : s.id]
+}
+
+>>> 03_modules/vpc/variables.tf
+variable "vpc_cidr" {
+  description = "CIDR block for the VPC"
+  type        = string
+
+}
+
+variable "public_subnets" {
+  description = "List of public subnet CIDRs"
+  type        = list(string)
+}
+
+variable "private_subnets" {
+  description = "List of private subnet CIDRs"
+  type        = list(string)
+  
+}
+
+variable "azs_public" {
+  description = "List of public availability zones"
+  type        = list(string)
+}
+
+variable "azs_private" {
+  description = "List of availability zones"
+  type        = list(string)
+}
+
+
+variable "tags" {
+  description = "Tags to apply to resources"
+  type        = map(string)
+  default     = {}
+}
+
+>>> CONTRIBUTING.MD
+# 🤝 Contributing to CareMesh Health Infra Project
+
+First of all, thank you for taking the time to contribute!
+
+This project is building a production-ready, HIPAA-compliant cloud platform for healthcare SaaS and ML workloads. Maintaining high-quality infrastructure and clear processes is key to its success.
+
+## 📋 How to Contribute
+
+- Fork the repository
+- Create a new branch (`git checkout -b feature/your-feature-name`)
+- Make your changes following the existing folder structure and standards
+- Follow clean commit message conventions (using `feat:`, `fix:`, `chore:`, `docs:`, etc.)
+- Push your branch (`git push origin feature/your-feature-name`)
+- Open a Pull Request (PR) against the `main` branch
+
+## 📦 Commit Message Standards
+
+We use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) style enforced by Commitlint and Husky.
+
+Examples:
+- `feat: add new EKS module`
+- `fix: correct S3 bucket policy`
+- `chore: update gitignore for node_modules`
+- `docs: update README with setup instructions`
+
+## ✅ Pull Request Guidelines
+
+- Describe **what you changed** and **why** in your PR description
+- Link any related issues if applicable
+- Make sure Terraform validates and formats cleanly (`terraform validate`, `terraform fmt`)
+- Keep PRs focused on one logical change whenever possible
+- Be respectful and collaborative in reviews
+
+---
+
+Thank you for helping build CareMesh Health! 🚀
+
+>>> LICENSE
+MIT License
+
+Copyright (c) 2025 Oluwadamilola Oyaluade
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+>>> README.md
+# 📌 AWS CLI & IAM Setup
+
+# 🏥 Cloud Infra Bootstrapping for Healthcare Startup
+
+> **CareMesh Health Bootstrapping provides a ready-to-deploy, secure, and scalable AWS infrastructure for healthcare and ML SaaS startups.**
+>
+> **Launch fast, scale securely, and allow experts to customize later — without blocking early progress.**
+
+This project bootstraps a **production-ready cloud platform** designed for **healthcare SaaS applications, machine learning workflows, and enterprise observability.**
+
+Originally built for the fictional company **CareMesh Health**, this platform simulates real-world AWS cloud infrastructure needs for fast-growing SaaS and ML-driven healthcare companies.
+
+---
+
+## 🩼 Linting & Commit Standards Setup
+
+To enforce consistent formatting and commit hygiene across Terraform, Markdown, YAML, and Git messages, this project includes a setup script:
+
+```bash
+bash lint-setup.sh
+```
+
+This script configures:
+
+* ✅ **Husky** and **Commitlint** for Conventional Commits
+* ✅ `pre-commit` hooks for:
+
+  * Terraform formatting and validation
+  * Markdown and YAML linting
+  * Trailing whitespace and EOF consistency
+* ✅ Uses `nvm` and Python `venv` (if available) for isolated environments
+
+Once configured, every commit will be auto-validated to ensure clean, professional standards.
+
+---
+
+## 🧠 Enterprise Scenario: *CareMesh Health*
+
+**CareMesh Health** is expanding from a monolithic, single-account AWS setup into a secure multi-account, multi-region architecture.
+Their product suite includes telehealth apps, predictive analytics tools, and AI-powered services — all of which must run on scalable, compliant infrastructure.
+
+### 👩‍⚕️ Core Business Needs:
+
+* HIPAA-compliant data storage & processing
+* CI/CD pipelines for rapid deployment of patient-facing web apps and ML services
+* A scalable architecture to support predictive analytics (e.g., patient no-shows, risk scoring)
+* Team-based access separation: Dev, ML, Security, Compliance, and Production
+* Cost transparency and control across business units
+
+### 🌐 Cloud Infrastructure Goals:
+
+1. **Multi-Account AWS Org** to isolate environments
+2. **Terraform Modules** for repeatable networking and services
+3. **EKS for App & ML Workloads** with GitHub Actions CI/CD
+4. **Centralized Logging & Monitoring** for operations and incident response
+5. **S3 + RDS + DynamoDB** as core data services
+6. **MLflow + FastAPI + Prometheus/Grafana** stack for machine learning operations
+7. **KMS, IAM SCPs, and GuardDuty** for security
+
+## 🔧 [Cloud Infrastructure Bootstrapping](https://github.com/OOyaluade/cloud-infra-bootstrapping)
+
+### *CareMesh Health* Progress & Roadmap
+
+> \[Note!!!] : While you are programatically able to create new AWS accounts using Terraform, programatic deletion like `terraform destroy ` will fail to remove both new and existing account. Ensure that before you apply, you/team members have access to the email addresse/s for the account/s you plan to create.
+
+> \[Note!!!] : **AWS IAM Identity Center (formerly AWS SSO)** must be manually activated in each AWS Organization's management account. Terraform **cannot** enable Identity Center automatically, just like it cannot delete AWS accounts. You must first log in via console, activate Identity Center, and configure your identity source (built-in, Active Directory, or external IdP). Only then can Terraform manage permission sets and assignments.
+
+| Step | Module                                           | Status         |
+| ---- | ------------------------------------------------ | -------------- |
+| 1    | Backend Bootstrap (S3, DynamoDB)                 | ✅ Completed    |
+| 2    | Modular VPC Deployment                           | ✅ Completed    |
+| 3    | IAM Policies + SCPs Setup                        | ⚠️ In Progress |
+| 4    | Secure Networking (Subnets, NAT, Route Tables)   | 🔜 Upcoming    |
+| 5    | Account Vending Machine                          | 🔜 Upcoming    |
+| 6    | RDS Database Setup (Private Subnets)             | 🔜 Upcoming    |
+| 7    | EKS Cluster Creation (w/ OIDC, GPU Nodes for ML) | 🔜 Upcoming    |
+| 8    | Flask App Deployment (EC2 → EKS)                 | 🔜 Upcoming    |
+| 9    | Observability Stack (Grafana, Prometheus)        | 🔜 Upcoming    |
+| 10   | Model Training + Deployment (MLflow)             | 🔜 Upcoming    |
+| 11   | CI/CD Pipelines for Apps & Models                | 🔜 Upcoming    |
+| 12   | Monitoring + Drift Detection                     | 🔜 Upcoming    |
+
+### [Resource Provisioning Guide](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Resource%20Provisioning%20Guide.md)
+
+A complete guide for provisioning this infrastructure with Terraform, including backend initialization, resource deployment, and backend state migration [available here](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Resource%20Provisioning%20Guide.md). If you feel confident, skip the above and continue with the details below.
+
+> ✉️ For full configuration steps, see [`docs/AWSCLI-setup`](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/AWS-CLI%20setup.md)
+
+---
+
+> \[!IMPORTANT]
+> Terraform requires that the **S3 bucket** (for storing the state file) and the **DynamoDB table** (for state locking) already exist before initializing the backend.
+> This creates a *“chicken-and-egg” problem* because you can’t create them using Terraform if Terraform itself hasn’t been initialized yet.
+
+---
+
+#### ✅ Solution: Manual or Bootstrap Step
+
+Before you can deploy the rest of the infrastructure (`02_cloudinfra`), you must **manually create** or **bootstrap** the following resources:
+
+| Resource       | Example Name        | Purpose                               |
+| -------------- | ------------------- | ------------------------------------- |
+| S3 Bucket      | `caremesh-tf-2723`  | Store Terraform state                 |
+| DynamoDB Table | `caremesh-tf-locks` | Lock state to prevent race conditions |
+
+```bash
+# Create S3 bucket
+aws s3api create-bucket --bucket caremesh-tf-2723 --region us-east-1
+
+# Create DynamoDB lock table
+aws dynamodb create-table \
+  --table-name caremesh-tf-locks \
+  --attribute-definitions AttributeName=LockID,AttributeType=S \
+  --key-schema AttributeName=LockID,KeyType=HASH \
+  --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+  --region us-east-1
+```
+
+Alternatively, you can:
+
+* Use a **separate Terraform config** (`01_bootstrap_backend/`) *without* a backend block
+* Run `terraform init && terraform apply` to provision backend resources
+* Then enable remote backend in `02_cloudinfra` using `terraform init -migrate-state`
+
+> 💼 **In real enterprise environments**, many teams use [Terraform Cloud](https://www.terraform.io/cloud) or tools like Spacelift or Atlantis for easier collaboration, secure state handling, and CI/CD workflows.
+
+---
+
+### 🧠 Subnetting Refresher + VPC IaC
+
+You can refer to:
+
+* 📄 [`docs/Quick Subnetting Refresher (For Cloud Engineers).md`](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Quick%20Subnetting%20Refresher%20%28For%20Cloud%20Engineers%29.md) for binary subnetting concepts
+* 🧱 [`02_cloudinfra/modules/vpc/`](https://github.com/OOyaluade/cloud-infra-bootstrapping/tree/main/02_core_infra/modules/vpc) for the modular Terraform code that defines:
+
+  * Public and private subnets
+  * Route tables and associations
+  * NAT and Internet Gateways
+
+---
+
+### 📁 Folder Structure
+
+```shell
+cloud-infra-bootstrapping/
+├── 01_bootstrap_backend
+│   ├── main.tf
+│   ├── terraform.tf
+│   └── variables.tf
+├── 02_core_infra
+│   ├── local.tf
+│   ├── main.tf
+│   ├── outputs.tf
+│   ├── terraform.tf
+│   └── variables.tf
+├── 03_modules
+│   ├── org_structure
+│   │   ├── locals.tf
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   ├── terraform.tfstate
+│   │   ├── terraform.tfstate.backup
+│   │   └── variables.tf
+│   └── vpc
+│       ├── main.tf
+│       ├── output.tf
+│       └── variables.tf
+├── commitlint.config.js
+├── CONTRIBUTING.MD
+├── docs
+│   ├── AWS-CLI setup.md
+│   ├── Quick Subnetting Refresher (For Cloud Engineers).md
+│   └── Resource Provisioning Guide.md
+├── lint-setup.sh
+├── LICENSE
+├── package.json
+├── package-lock.json
+└── README.md
+```
+
+> 🔁 **Pro Tip:** Use `git prune` periodically to clean up unreachable loose objects if you encounter Git warnings during local development.
+
+---
+
+### 📌 Recommendations
+
+✅ Start with `01_bootstrap_backend/` to bootstrap the backend. This makes it easy to:
+
+* Track the creation of state storage infrastructure
+* Cleanly separate bootstrapping from full infra provisioning
+
+Then proceed to `02_cloudinfra/` to deploy the rest of the infrastructure.
+
+---
+
+### 🏩 Account Design (Planned Structure)
+
+---
+
+| Account        | Purpose                                           |
+| -------------- | ------------------------------------------------- |
+| **Management** | Root account, billing, SCPs                       |
+| **Dev**        | All non-prod resources & testing                  |
+| **MLE / DS**   | Model training, evaluation, critical ML workloads |
+| **Prod**       | Production systems, regulated and external-facing |
+
+---
+
+>>> docs/AWS-CLI setup.md
+# ⚙️ AWS CLI Setup for Cloud Infrastructure Projects
+
+  
+
+This guide walks you through setting up the AWS CLI securely and correctly for infrastructure provisioning with Terraform, CI/CD pipelines, and DevOps automation.
+
+  
+
+---
+
+  
+
+## 🔐 Step 1: Create an IAM User (Avoid Root User)
+
+  
+
+1. Go to the AWS Console: [https://console.aws.amazon.com/iam](https://console.aws.amazon.com/iam)
+
+2. Navigate to **IAM > Users > Add user**
+
+3. Set a username like `terraform-admin`
+
+4. Choose **Programmatic access**
+
+5. Attach policy:  
+
+   - ✅ For learning: `AdministratorAccess`  
+
+   - 🔒 For real use: Custom policy with least privilege
+
+6. Save the **Access Key ID** and **Secret Access Key**
+
+  
+
+---
+
+  
+
+## 💻 Step 2: Install AWS CLI
+
+  
+
+### On Linux/macOS:
+
+```bash
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o awscliv2.zip
+
+unzip awscliv2.zip
+
+sudo ./aws/install
+
+```
+
+  
+
+### On Windows:
+
+- Download from: [https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-windows.html](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-windows.html)
+
+  
+
+---
+
+  
+
+## 🛠️ Step 3: Configure the AWS CLI
+
+  
+
+Run:
+
+```bash
+
+aws configure
+
+```
+
+  
+
+Provide your values:
+
+  
+
+| Prompt                | Example                      |
+
+| --------------------- | ---------------------------- |
+
+| AWS Access Key ID     | `AKIAIOSFODNN7EXAMPLE`       |
+
+| AWS Secret Access Key | `wJalrXUtnFEMI/...`          |
+
+| Default region name   | `us-east-1` (or your choice) |
+
+| Default output format | `json`                       |
+
+  
+
+This stores your credentials at:
+
+- `~/.aws/credentials`
+
+- `~/.aws/config`
+
+  
+
+---
+
+  
+
+## ✅ Step 4: Test Your Setup
+
+  
+
+```bash
+
+aws sts get-caller-identity
+
+```
+
+  
+
+Sample Output:
+
+```json
+
+{
+
+  "UserId": "AIDAEXAMPLE",
+
+  "Account": "123456789012",
+
+  "Arn": "arn:aws:iam::123456789012:user/terraform-admin"
+
+}
+
+```
+
+  
+
+If this works, you're ready to provision infrastructure using Terraform or deploy apps with CI/CD tools like GitHub Actions.
+
+  
+
+---
+
+  
+
+## 🔐 **Environment Variables for AWS Credentials**
+
+  
+
+These 3 are the minimum needed:
+
+  
+
+| Variable Name           | Purpose                    |
+
+| ----------------------- | -------------------------- |
+
+| `AWS_ACCESS_KEY_ID`     | Your AWS access key ID     |
+
+| `AWS_SECRET_ACCESS_KEY` | Your AWS secret key        |
+
+| `AWS_DEFAULT_REGION`    | Region (e.g., `us-east-1`) |
+
+  
+  
+
+## 🛠️ **How to Set These Per OS**
+
+  
+
+### ✅ **Linux/macOS (bash/zsh)**
+
+  
+
+#### Temporary (for current shell):
+
+  
+
+```bash
+
+export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+
+export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+
+export AWS_DEFAULT_REGION=us-east-1
+
+```
+
+  
+
+✅ Then run:
+
+  
+
+```bash
+
+aws s3 ls
+
+```
+
+  
+
+#### Permanent:
+
+  
+
+Add to `~/.bashrc`, `~/.zshrc`, or `~/.profile`:
+
+  
+
+```bash
+
+export AWS_ACCESS_KEY_ID=...
+
+export AWS_SECRET_ACCESS_KEY=...
+
+export AWS_DEFAULT_REGION=us-east-1
+
+```
+
+  
+
+Then:
+
+  
+
+```bash
+
+source ~/.bashrc
+
+```
+
+  
+
+---
+
+  
+
+### 🫯 **Windows (PowerShell)**
+
+  
+
+#### Temporary:
+
+  
+
+```powershell
+
+$env:AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
+
+$env:AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+
+$env:AWS_DEFAULT_REGION = "us-east-1"
+
+```
+
+  
+
+Test:
+
+  
+
+```powershell
+
+aws ec2 describe-instances
+
+```
+
+  
+
+#### Permanent:
+
+  
+
+Set it via **Environment Variables GUI**:
+
+  
+
+- Search "Environment Variables" in Start
+
+- Under "User variables", add:
+
+    - `AWS_ACCESS_KEY_ID`
+
+    - `AWS_SECRET_ACCESS_KEY`
+
+    - `AWS_DEFAULT_REGION`
+
+  
+
+✅ Then restart your terminal.
+
+  
+
+---
+
+  
+
+## 🔧 **Using a Script or `.env` File**
+
+  
+
+You can load creds from a file (e.g. `.env`) with:
+
+  
+
+```bash
+
+# .env
+
+export AWS_ACCESS_KEY_ID=...
+
+export AWS_SECRET_ACCESS_KEY=...
+
+export AWS_DEFAULT_REGION=us-east-1
+
+```
+
+  
+
+Then load:
+
+  
+
+```bash
+
+source .env
+
+```
+
+  
+
+---
+
+  
+
+## 🧲 Testing If It Works
+
+  
+
+Try this:
+
+  
+
+```bash
+
+aws sts get-caller-identity
+
+```
+
+  
+
+If you get an IAM User or Role back, it’s working 💪
+
+  
+
+---
+
+  
+
+## 🔐 Extra Tip: Use `AWS_PROFILE` for Named Profiles
+
+  
+
+You can define multiple profiles in `~/.aws/credentials`:
+
+  
+
+```ini
+
+[default]
+
+aws_access_key_id = ABC123
+
+aws_secret_access_key = DEF456
+
+  
+
+[dev-account]
+
+aws_access_key_id = GHI789
+
+aws_secret_access_key = JKL012
+
+```
+
+  
+
+Then call:
+
+  
+
+```bash
+
+aws s3 ls --profile dev-account
+
+```
+
+  
+
+Or:
+
+  
+
+```bash
+
+export AWS_PROFILE=dev-account
+
+```
+
+  
+
+---
+
+  
+
+## 🔗 Resources
+
+  
+
+- [AWS CLI Docs](https://docs.aws.amazon.com/cli/latest/userguide/)
+
+- [IAM Best Practices](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html)
+
+  
+
+---
+>>> docs/Quick Subnetting Refresher (For Cloud Engineers).md
+## 🧠 Quick Subnetting Refresher (For Cloud Engineers)
+
+### 🔢 Binary Basics:
+
+- **255.0.0.0** = `/8`
+    
+- `255` = 8 bits
+    
+
+---
+
+### 🧭 IP Address Classes
+
+|Class|Range|Default Subnet Mask|
+|---|---|---|
+|A|1–126|255.0.0.0 (/8)|
+|B|128–191|255.255.0.0 (/16)|
+|C|192–223|255.255.255.0 (/24)|
+|—|Loopback|127.0.0.1|
+
+---
+
+### 🧮 Example – Class A Calculation
+
+- **Mask:** `255.0.0.0` → `/8`
+    
+- **Binary:** `11111111.00000000.00000000.00000000`
+    
+- **Formula:** Number of IPs = `(2^number of 0s) - 2`
+    
+- In this case: `(2^24) - 2 = 16,777,214`
+    
+
+---
+
+### 📌 Address Breakdown for Class A (e.g., 10.0.0.0)
+
+- Network ID: `10.0.0.0`
+    
+- First usable IP: `10.0.0.1`
+    
+- Last usable IP: `10.255.255.254`
+    
+- Broadcast address: `10.255.255.255`
+    
+
+---
+
+### 🔢 Subnet Mask Chart
+
+| Bit No. | 0   | 1   | 2   | 3   | 4   | 5   | 6   | 7   |
+| ------- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Binary  | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   |
+| Decimal | 128 | 64  | 32  | 16  | 8   | 4   | 2   | 1   |
+| Mask    | 128 | 192 | 224 | 240 | 248 | 252 | 254 | 255 |
+
+---
+
+### ✍️ Subnetting Step-by-Step
+
+#### Example 1:
+
+- IP: `172.16.0.0`
+    
+- Default subnet: `255.255.0.0` → `/16`
+    
+- Let's subnet into: `255.255.240.0`
+    
+- Binary: `11111111.11111111.11110000.00000000`
+    
+- **Borrowed bits:** 4 (from the third octet)
+    
+- **New CIDR:** `/20`
+    
+- **Hosts per subnet:** `(2^12) - 2 = 4094`
+    
+- **Subnets:** `2^4 = 16`
+    
+- This is a **Class B** network, so we only count bits beyond the first 16.
+    
+
+#### Example 2:
+
+- IP: `172.16.0.0`
+    
+- New subnet: `255.255.252.0`
+    
+- Binary: `11111111.11111111.11111100.00000000`
+    
+- Borrowed bits: 6
+    
+- Hosts per subnet: `(2^10) - 2 = 1022`
+    
+- Subnets: `2^6 = 64`
+    
+
+---
+
+### 🔍 Class A Example (CIDR /20)
+
+- IP: `10.0.0.0`
+    
+- Subnet: `255.255.248.0` → `/21`
+    
+- Default for Class A: `/8`
+    
+- Borrowed bits: 13
+    
+- IPs per subnet: `(2^11) - 2 = 2046`
+    
+- Subnets possible: `2^13 = 8192`
+    
+
+---
+
+### 📚 Bringing It All Together (Full Subnet Breakdown)
+
+- Given IP: 172.16.244.0 and subnet 255.255.224.0 get the bellow details 
+
+- IP: `172.16.0.0`
+    
+- Subnet mask: `255.255.224.0` → `/19`
+    
+- Default class: **B** → `/16`
+    
+- Borrowed bits: 3
+    
+- IPs per subnet: `(2^13) - 2 = 8190`
+    
+- Subnets: `2^3 = 8`
+    
+
+Since the **third octet** starts at `224`, which has a decimal step of **32**, each new subnet starts 32 IPs apart in the third octet.
+
+|Subnet|Network ID|First IP|Last IP|Broadcast|
+|---|---|---|---|---|
+|1|172.16.0.0|172.16.0.1|172.16.31.254|172.16.31.255|
+|2|172.16.32.0|172.16.32.1|172.16.63.254|172.16.63.255|
+|3|172.16.64.0|172.16.64.1|172.16.95.254|172.16.95.255|
+|4|172.16.96.0|172.16.96.1|172.16.127.254|172.16.127.255|
+|5|172.16.128.0|172.16.128.1|172.16.159.254|172.16.159.255|
+|6|172.16.160.0|172.16.160.1|172.16.191.254|172.16.191.255|
+|7|172.16.192.0|172.16.192.1|172.16.223.254|172.16.223.255|
+|8|172.16.224.0|172.16.224.1|172.16.255.254|172.16.255.255|
+
+>>> docs/Resource Provisioning Guide.md
+## 📦 Prerequisites
+
+Ensure the following before starting:
+
+- AWS CLI is installed and configured (`aws configure`)
+    
+- Terraform is installed (`terraform -version`)
+    
+- S3 bucket and DynamoDB table for backend state are created (or ready to be created via bootstrap)
+    
+
+---
+
+## 🧱 Step 1: Bootstrap Backend Resources (Optional)
+
+If the S3 bucket and DynamoDB table do **not** already exist, start with the `01_terraform_s3_state_file/` module to provision them.
+
+```bash
+cd 01_terraform_s3_state_file/
+
+terraform init
+terraform apply -auto-approve
+```
+
+> 🔁 This step creates:
+> 
+> - `S3 bucket` for remote state
+>     
+> - `DynamoDB table` for state locking
+>     
+
+Once created, you can proceed to enable remote backend in your main infrastructure module.
+
+---
+
+## 🌐 Step 2: Initialize Remote Backend
+
+Go to your main infrastructure code directory (`02_cloudinfra/`) and ensure the backend block is properly configured in `terraform.tf`.
+
+Then run:
+
+```bash
+cd ../02_cloudinfra/
+terraform init
+```
+
+> ⚠️ If you've already deployed infra using local state and now want to migrate to remote state, use:
+
+```bash
+terraform init -migrate-state
+```
+
+Terraform will prompt you to confirm the migration.
+
+---
+
+## 🏗️ Step 3: Apply Infrastructure
+
+Now deploy your infrastructure:
+
+```bash
+terraform apply -auto-approve
+```
+
+This provisions all resources defined in the module (e.g., VPC, subnets, gateways).
+
+---
+
+## 📥 Optional: Plan Before Applying
+
+For safer changes:
+
+```bash
+terraform plan -out=tfplan
+terraform apply tfplan
+```
+
+This ensures you're only applying what you've previewed.
+
+---
+
+## 🔁 Reinitialize or Reconfigure
+
+You may re-run initialization if you:
+
+- Change the backend settings
+    
+- Clone the project into a new machine
+    
+- Migrate between backends
+    
+
+```bash
+terraform init -reconfigure
+```
+
+---
+
+## 🧼 Cleanup Resources
+
+To destroy resources:
+
+```bash
+terraform destroy
+```
+
+> 💡 This only works with the same `terraform.tfstate`. If you're using remote state, ensure you’re authenticated and pointing to the correct backend.
+
+---
+
+## 📌 Pro Tips
+
+- Run `terraform fmt` to auto-format configs
+    
+- Run `terraform validate` to check for syntax issues
+    
+- Use `terraform output` to retrieve values after provisioning
+    
+- For multiple environments (e.g., dev/prod), use workspaces or separate state folders
+    
+
+---
+
+## ✅ Summary
+
+|Command|Purpose|
+|---|---|
+|`terraform init`|Initializes Terraform working directory|
+|`terraform apply`|Applies the changes to reach desired state|
+|`terraform destroy`|Destroys the infrastructure|
+|`terraform init -migrate-state`|Migrates existing state to remote backend|
+|`terraform init -reconfigure`|Reinitializes backend config|
+
+---
+
+You're all set to build! 🛠️
+
+---
+
+Need to automate these steps in a CI pipeline or script? Let me know and I’ll help set that up too.
+>>> lint-setup.sh
+#!/usr/bin/env bash
+set -euo pipefail
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+echo "?? Starting unified lint setup �"
+
+############################
+# 1) Node / npm / Commitlint
+############################
+if ! command -v node &>/dev/null || ! command -v npm &>/dev/null; then
+  echo "??  Installing Node LTS + npm (apt) �"
+  sudo apt update && sudo apt -y install nodejs npm
+fi
+
+# Initialise npm only if package.json is absent
+[[ -f "$REPO_ROOT/package.json" ]] || npm init -y
+
+npm install --save-dev @commitlint/{cli,config-conventional} husky >/dev/null
+
+cat > commitlint.config.js <<'CFG'
+module.exports = { extends: ['@commitlint/config-conventional'] };
+CFG
+
+npx husky install
+npx husky add .husky/commit-msg 'npx --no -- commitlint --edit "$1"'
+
+#########################################
+# 2) Python virtualenv + pre-commit hooks
+#########################################
+if [[ ! -d "$REPO_ROOT/.venv" ]]; then
+  echo "?? Creating Python venv �"
+  python3 -m venv .venv
+fi
+source .venv/bin/activate
+pip install --upgrade pip >/dev/null
+pip install pre-commit >/dev/null
+
+cat > .pre-commit-config.yaml <<'YAML'
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.79.0
+    hooks: [ { id: terraform_fmt }, { id: terraform_validate }, { id: terraform_docs } ]
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.32.2
+    hooks: [ { id: markdownlint } ]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+YAML
+
+pre-commit install
+
+################################
+# 3) One-time smoke-test commit
+################################
+if ! git rev-parse --verify -q lint-setup-test &>/dev/null; then
+  echo "?? Running smoke-test commit �"
+  git checkout -qb lint-setup-test
+  echo "# Test file for linting setup" > lint-test.txt
+  git add lint-test.txt
+  if git commit -m "test: verify lint setup" ; then
+    echo "? Commit passed hooks."
+  else
+    echo "? Commit failed hooks � check output above."
+    exit 1
+  fi
+  # Clean up
+  git checkout - &&
+  git branch -D lint-setup-test &&
+  rm lint-test.txt
+fi
+
+echo "?? All set! Conventional commits, Husky, and pre-commit Terraform/Markdown linters are live."
+
+>>> package-lock.json
+{
+  "name": "cloud-infra-bootstrapping",
+  "version": "1.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "cloud-infra-bootstrapping",
+      "version": "1.0.0",
+      "license": "ISC"
+    }
+  }
+}
+
+>>> package.json
+{
+  "name": "cloud-infra-bootstrapping",
+  "version": "1.0.0",
+  "description": "This repository is the landing site. Links to provisioning secure and scalable AWS infrastructure using Terraform in a sequential manner are found in the table bellow.   These links bootstraps everything from IAM to VPC networking to EKS; E.T.C — powering a regulated, fast-moving healthcare SaaS.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OOyaluade/cloud-infra-bootstrapping.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OOyaluade/cloud-infra-bootstrapping/issues"
+  },
+  "homepage": "https://github.com/OOyaluade/cloud-infra-bootstrapping#readme"
+}
+

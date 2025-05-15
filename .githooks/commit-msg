@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+"""
+Git commit-msg hook to enforce Conventional Commit format.
+
+Example of allowed formats:
+  - feat(pipeline): add early stopping
+  - fix(auth): resolve token refresh issue
+  - docs: update README
+
+It must follow: <type>(optional-scope): <description>
+"""
+
+import re
+import sys
+
+# ✅ Allowed commit types based on Conventional Commits
+ALLOWED_TYPES = [
+    "feat",     # A new feature
+    "fix",      # A bug fix
+    "docs",     # Documentation only
+    "style",    # Code style (formatting, missing semicolons, etc)
+    "refactor", # Code change that neither fixes a bug nor adds a feature
+    "perf",     # Performance improvement
+    "test",     # Adding or updating tests
+    "build",    # Build system or external dependencies
+    "ci",       # CI/CD configuration
+    "chore",    # Routine tasks like dependency bumps
+    "revert"    # Revert a previous commit
+]
+
+# ✅ Regex to match the allowed format
+COMMIT_PATTERN = re.compile(
+    r"^(" + "|".join(ALLOWED_TYPES) + r")(?:\([\w\-]+\))?: .+"
+)
+
+def main():
+    # Path to the commit message file passed by Git
+    commit_msg_file = sys.argv[1]
+
+    # Read the first line of the commit message
+    with open(commit_msg_file, "r") as file:
+        commit_message = file.readline().strip()
+
+    # Validate against the pattern
+    if not COMMIT_PATTERN.match(commit_message):
+        print("\n❌ INVALID COMMIT MESSAGE FORMAT:")
+        print(f"   '{commit_message}'")
+        print("\n✅ Use the format: type(optional-scope): description")
+        print("   Example: feat(api): add login endpoint")
+        print(f"\n📘 Allowed types: {', '.join(ALLOWED_TYPES)}\n")
+        sys.exit(1)  # Exit with failure so Git aborts the commit
+    else:
+        print("\n✅ Commit Succesfull")
+if __name__ == "__main__":
+    main()

@@ -17,7 +17,9 @@ Originally built for the fictional company **CareMesh Health**, this platform si
 To enforce consistent formatting and commit hygiene across Terraform, Markdown, YAML, and Git messages, this project includes a setup script:
 
 ```bash
-bash lint-setup.sh
+chmod +x .githooks/commit-msg
+git config core.hooksPath .githooks
+
 ```
 
 This script configures:

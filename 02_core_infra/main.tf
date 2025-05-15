@@ -10,5 +10,11 @@
 
 
 module "org_structure" {
-  source = "../03_modules/02_org_structure"
+  source = "../03_modules/01_org_structure"
+}
+
+module "permission_sets" {
+  source         = "aws-ia/permission-sets/aws"  # <- No cloning needed!
+  version        = "0.1.0"                        # <-- Optional: use latest stable
+  templates_path = "./templates"
 }
