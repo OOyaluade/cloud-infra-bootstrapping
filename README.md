@@ -17,7 +17,7 @@ Originally built for the fictional company **CareMesh Health**, this platform si
 To enforce consistent formatting and commit hygiene across Terraform, Markdown, YAML, and Git messages, this project includes a setup script:
 
 ```bash
-chmod +x .githooks/commit-msg
+chmod +x .githooks/commit-msgsdsd
 git config core.hooksPath .githooks
 
 ```
