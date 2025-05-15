@@ -5,8 +5,7 @@ terraform {
     region = "us-east-1"
     use_lockfile = true
 
-    dynamodb_table = "caremesh-tf-locks"
-    encrypt        = true
+
   }
   required_providers {
     aws = {
