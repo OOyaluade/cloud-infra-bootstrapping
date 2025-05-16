@@ -1,5 +1,5 @@
 # 📌 AWS CLI & IAM Setup
-
+*| This Project is evolving until launch in ~6 months(November,2025), early contributors are welcomed|*
 # 🏥 Cloud Infra Bootstrapping for Startup in:
 
 - Healthcare
@@ -109,7 +109,7 @@ You can refer to:
 
 ---
 
-### 📁 Folder Structure
+### 📁 Current Folder Structure | Evolving until project launch 
 
 ```shell
 cloud-infra-bootstrapping/
