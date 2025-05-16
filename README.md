@@ -54,20 +54,20 @@ Their product suite includes telehealth apps, predictive analytics tools, and AI
 
 > \[Note!!!] : **AWS IAM Identity Center (formerly AWS SSO)** must be manually activated in each AWS Organization's management account. Terraform **cannot** enable Identity Center automatically, just like it cannot delete AWS accounts. You must first log in via console, activate Identity Center, and configure your identity source (built-in, Active Directory, or external IdP). Only then can Terraform manage permission sets and assignments.
 
-| Step | Module                                                                 | Status         |
-| ---- | ---------------------------------------------------------------------- | -------------- |
-| 1    | Backend Bootstrap (S3, DynamoDB)                                       | ✅ Completed    |
-| 2    | Modular VPC Deployment                                                 | ✅ Completed    |
-| 3    | IAM Policies + SCPs Setup \| IAM Identity Center + Role & Groups+ SCPs | ⚠️ In Progress |
-| 4    | Secure Networking (Subnets, NAT, Route Tables)                         | 🔜 Upcoming    |
-| 5    | Account Vending Machine                                                | 🔜 Upcoming    |
-| 6    | RDS Database Setup (Private Subnets)                                   | 🔜 Upcoming    |
-| 7    | EKS Cluster Creation (w/ OIDC, GPU Nodes for ML)                       | 🔜 Upcoming    |
-| 8    | Flask App Deployment (EC2 → EKS)                                       | 🔜 Upcoming    |
-| 9    | Observability Stack (Grafana, Prometheus)                              | 🔜 Upcoming    |
-| 10   | Model Training + Deployment (MLflow)                                   | 🔜 Upcoming    |
-| 11   | CI/CD Pipelines for Apps & Models                                      | 🔜 Upcoming    |
-| 12   | Monitoring + Drift Detection                                           | 🔜 Upcoming    |
+| Step | Module                                                                                                                                                                                                                                         | Status                |
+| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| 1    | Backend Bootstrap (S3, DynamoDB)                                                                                                                                                                                                               | ✅ Completed           |
+| 2    | Modular VPC Deployment                                                                                                                                                                                                                         | ✅ Completed           |
+| 3    | IAM Policies + SCPs Setup \| IAM Identity Center + Role & Groups+ SCPs                                                                                                                                                                         | ⚠️ In Progress        |
+| 4    | Secure Networking (Subnets, NAT, Route Tables)                                                                                                                                                                                                 | 🔜 Upcoming           |
+| 5    | Account Vending Machine                                                                                                                                                                                                                        | 🔜 Upcoming           |
+| 6    | RDS Database Setup (Private Subnets)                                                                                                                                                                                                           | 🔜 Upcoming           |
+| 7    | EKS Cluster Creation (w/ OIDC, GPU Nodes for ML)                                                                                                                                                                                               | 🔜 Upcoming           |
+| 8    | Flask App Deployment (EC2 → EKS)<br>[OOyaluade/Website_Terraform_Code](https://github.com/OOyaluade/Website_Terraform_Code)<br>[OOyaluade/Extract_Transform_Load_AWS_WEB_APP](https://github.com/OOyaluade/Extract_Transform_Load_AWS_WEB_APP) | ⚠️⚠️ Pending Revision |
+| 9    | Observability Stack (Grafana, Prometheus)                                                                                                                                                                                                      | 🔜 Upcoming           |
+| 10   | Model Training + Deployment (MLflow)                                                                                                                                                                                                           | 🔜 Upcoming           |
+| 11   | CI/CD Pipelines for Apps & Models                                                                                                                                                                                                              | 🔜 Upcoming           |
+| 12   | Monitoring + Drift Detection                                                                                                                                                                                                                   | 🔜 Upcoming           |
 
 
 ---
