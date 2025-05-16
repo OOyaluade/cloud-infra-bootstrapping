@@ -176,9 +176,3 @@ cloud-infra-bootstrapping/
 |**MLE / DS**|Model training, evaluation, critical ML workloads|
 |**Prod**|Production systems, regulated and external-facing|
 
-```
-
----
-
-Let me know if you'd like this saved as a downloadable `README.md` file or if you'd like a version formatted for GitHub Pages or Obsidian!
-```
