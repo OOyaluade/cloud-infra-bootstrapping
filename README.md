@@ -1,12 +1,11 @@
 # 📌 AWS CLI & IAM Setup
 
 # 🏥 Cloud Infra Bootstrapping for Startup in:
+
 - Healthcare
 - MLE / DS
 - E.T.C
-
-
-This project bootstraps a **production-ready cloud platform** designed for **healthcare SaaS applications, machine learning workflows, and enterprise observability with toolings to allow experts to customize later — without blocking early progress.**
+This project bootstraps a **production-ready cloud platform** designed for **healthcare SaaS applications, machine learning workflows, and enterprise observability with tooling to allow experts to customize later — without blocking early progress.**
 
 Originally built for the fictional company **CareMesh Health**, this platform simulates real-world AWS cloud infrastructure needs for fast-growing SaaS and ML-driven healthcare companies.
 
@@ -17,22 +16,10 @@ Originally built for the fictional company **CareMesh Health**, this platform si
 To enforce consistent formatting and commit hygiene across Terraform, Markdown, YAML, and Git messages, this project includes a setup script:
 
 ```bash
-chmod +x .githooks/commit-msgsdsd
+chmod +x .githooks/commit-msgs
 git config core.hooksPath .githooks
 
 ```
-
-This script configures:
-
-* ✅ **Husky** and **Commitlint** for Conventional Commits
-* ✅ `pre-commit` hooks for:
-
-  * Terraform formatting and validation
-  * Markdown and YAML linting
-  * Trailing whitespace and EOF consistency
-* ✅ Uses `nvm` and Python `venv` (if available) for isolated environments
-
-Once configured, every commit will be auto-validated to ensure clean, professional standards.
 
 ---
 
@@ -67,62 +54,44 @@ Their product suite includes telehealth apps, predictive analytics tools, and AI
 
 > \[Note!!!] : **AWS IAM Identity Center (formerly AWS SSO)** must be manually activated in each AWS Organization's management account. Terraform **cannot** enable Identity Center automatically, just like it cannot delete AWS accounts. You must first log in via console, activate Identity Center, and configure your identity source (built-in, Active Directory, or external IdP). Only then can Terraform manage permission sets and assignments.
 
-| Step | Module                                           | Status         |
-| ---- | ------------------------------------------------ | -------------- |
-| 1    | Backend Bootstrap (S3, DynamoDB)                 | ✅ Completed    |
-| 2    | Modular VPC Deployment                           | ✅ Completed    |
-| 3    | IAM Policies + SCPs Setup                        | ⚠️ In Progress |
-| 4    | Secure Networking (Subnets, NAT, Route Tables)   | 🔜 Upcoming    |
-| 5    | Account Vending Machine                          | 🔜 Upcoming    |
-| 6    | RDS Database Setup (Private Subnets)             | 🔜 Upcoming    |
-| 7    | EKS Cluster Creation (w/ OIDC, GPU Nodes for ML) | 🔜 Upcoming    |
-| 8    | Flask App Deployment (EC2 → EKS)                 | 🔜 Upcoming    |
-| 9    | Observability Stack (Grafana, Prometheus)        | 🔜 Upcoming    |
-| 10   | Model Training + Deployment (MLflow)             | 🔜 Upcoming    |
-| 11   | CI/CD Pipelines for Apps & Models                | 🔜 Upcoming    |
-| 12   | Monitoring + Drift Detection                     | 🔜 Upcoming    |
+| Step | Module                                                                 | Status         |
+| ---- | ---------------------------------------------------------------------- | -------------- |
+| 1    | Backend Bootstrap (S3, DynamoDB)                                       | ✅ Completed    |
+| 2    | Modular VPC Deployment                                                 | ✅ Completed    |
+| 3    | IAM Policies + SCPs Setup \| IAM Identity Center + Role & Groups+ SCPs | ⚠️ In Progress |
+| 4    | Secure Networking (Subnets, NAT, Route Tables)                         | 🔜 Upcoming    |
+| 5    | Account Vending Machine                                                | 🔜 Upcoming    |
+| 6    | RDS Database Setup (Private Subnets)                                   | 🔜 Upcoming    |
+| 7    | EKS Cluster Creation (w/ OIDC, GPU Nodes for ML)                       | 🔜 Upcoming    |
+| 8    | Flask App Deployment (EC2 → EKS)                                       | 🔜 Upcoming    |
+| 9    | Observability Stack (Grafana, Prometheus)                              | 🔜 Upcoming    |
+| 10   | Model Training + Deployment (MLflow)                                   | 🔜 Upcoming    |
+| 11   | CI/CD Pipelines for Apps & Models                                      | 🔜 Upcoming    |
+| 12   | Monitoring + Drift Detection                                           | 🔜 Upcoming    |
 
-### [Resource Provisioning Guide](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Resource%20Provisioning%20Guide.md)
-
-A complete guide for provisioning this infrastructure with Terraform, including backend initialization, resource deployment, and backend state migration [available here](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Resource%20Provisioning%20Guide.md). If you feel confident, skip the above and continue with the details below.
-
-> ✉️ For full configuration steps, see [`docs/AWSCLI-setup`](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/AWS-CLI%20setup.md)
 
 ---
 
 > \[!IMPORTANT]
 > Terraform requires that the **S3 bucket** (for storing the state file) and the **DynamoDB table** (for state locking) already exist before initializing the backend.
+> Terraform also does not need DynamoDB to be configured in it new update. You only need to set an existing S3 to `use_lockfile` to `true`. Don't worry, i have added this revised method to the `terraform.tf` file. Just remember to create the bucket that will manage your state file manually or use the CLI script bellow. 
 > This creates a *“chicken-and-egg” problem* because you can’t create them using Terraform if Terraform itself hasn’t been initialized yet.
 
 ---
 
 #### ✅ Solution: Manual or Bootstrap Step
 
-Before you can deploy the rest of the infrastructure (`02_cloudinfra`), you must **manually create** or **bootstrap** the following resources:
+Before you can deploy the rest of the infrastructure (`01_cloudinfra`), you must **manually create** or **bootstrap** the following resources:
 
 | Resource       | Example Name        | Purpose                               |
 | -------------- | ------------------- | ------------------------------------- |
 | S3 Bucket      | `caremesh-tf-2723`  | Store Terraform state                 |
-| DynamoDB Table | `caremesh-tf-locks` | Lock state to prevent race conditions |
 
 ```bash
 # Create S3 bucket
 aws s3api create-bucket --bucket caremesh-tf-2723 --region us-east-1
-
-# Create DynamoDB lock table
-aws dynamodb create-table \
-  --table-name caremesh-tf-locks \
-  --attribute-definitions AttributeName=LockID,AttributeType=S \
-  --key-schema AttributeName=LockID,KeyType=HASH \
-  --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
-  --region us-east-1
 ```
 
-Alternatively, you can:
-
-* Use a **separate Terraform config** (`01_bootstrap_backend/`) *without* a backend block
-* Run `terraform init && terraform apply` to provision backend resources
-* Then enable remote backend in `02_cloudinfra` using `terraform init -migrate-state`
 
 > 💼 **In real enterprise environments**, many teams use [Terraform Cloud](https://www.terraform.io/cloud) or tools like Spacelift or Atlantis for easier collaboration, secure state handling, and CI/CD workflows.
 
@@ -133,7 +102,7 @@ Alternatively, you can:
 You can refer to:
 
 * 📄 [`docs/Quick Subnetting Refresher (For Cloud Engineers).md`](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Quick%20Subnetting%20Refresher%20%28For%20Cloud%20Engineers%29.md) for binary subnetting concepts
-* 🧱 [`02_cloudinfra/modules/vpc/`](https://github.com/OOyaluade/cloud-infra-bootstrapping/tree/main/02_core_infra/modules/vpc) for the modular Terraform code that defines:
+* 🧱 [`01_cloudinfra/modules/vpc/`](https://github.com/OOyaluade/cloud-infra-bootstrapping/tree/main/01_core_infra/modules/vpc) for the modular Terraform code that defines:
 
   * Public and private subnets
   * Route tables and associations
@@ -145,53 +114,44 @@ You can refer to:
 
 ```shell
 cloud-infra-bootstrapping/
-├── 01_bootstrap_backend
-│   ├── main.tf
-│   ├── terraform.tf
-│   └── variables.tf
-├── 02_core_infra
-│   ├── local.tf
-│   ├── main.tf
-│   ├── outputs.tf
-│   ├── terraform.tf
-│   └── variables.tf
-├── 03_modules
-│   ├── org_structure
-│   │   ├── locals.tf
-│   │   ├── main.tf
-│   │   ├── outputs.tf
-│   │   ├── terraform.tfstate
-│   │   ├── terraform.tfstate.backup
-│   │   └── variables.tf
-│   └── vpc
-│       ├── main.tf
-│       ├── output.tf
-│       └── variables.tf
-├── commitlint.config.js
+├── 01_core_infra
+│   ├── locals.tf
+│   ├── main.tf
+│   ├── outputs.tf
+│   ├── terraform.tf
+│   └── variables.tf
+├── 02_modules
+│   ├── 01_org_structure
+│   │   ├── locals.tf
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── 02_iam_roles
+│   │   ├── locals.tf
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   ├── terraform.tf
+│   │   └── variables.tf
+│   ├── scp
+│   └── vpc
+│       ├── main.tf
+│       ├── output.tf
+│       └── variables.tf
 ├── CONTRIBUTING.MD
 ├── docs
-│   ├── AWS-CLI setup.md
-│   ├── Quick Subnetting Refresher (For Cloud Engineers).md
-│   └── Resource Provisioning Guide.md
-├── lint-setup.sh
+│   ├── AWS-CLI setup.md
+│   ├── Quick Subnetting Refresher (For Cloud Engineers).md
+│   └── Resource Provisioning Guide.md
 ├── LICENSE
+├── output.txt
 ├── package.json
 ├── package-lock.json
 └── README.md
+
+
 ```
 
 > 🔁 **Pro Tip:** Use `git prune` periodically to clean up unreachable loose objects if you encounter Git warnings during local development.
-
----
-
-### 📌 Recommendations
-
-✅ Start with `01_bootstrap_backend/` to bootstrap the backend. This makes it easy to:
-
-* Track the creation of state storage infrastructure
-* Cleanly separate bootstrapping from full infra provisioning
-
-Then proceed to `02_cloudinfra/` to deploy the rest of the infrastructure.
 
 ---
 
@@ -205,5 +165,3 @@ Then proceed to `02_cloudinfra/` to deploy the rest of the infrastructure.
 | **Dev**        | All non-prod resources & testing                  |
 | **MLE / DS**   | Model training, evaluation, critical ML workloads |
 | **Prod**       | Production systems, regulated and external-facing |
-
----
