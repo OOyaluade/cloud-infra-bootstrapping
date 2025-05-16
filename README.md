@@ -102,7 +102,7 @@ aws s3api create-bucket --bucket caremesh-tf-2723 --region us-east-1
 You can refer to:
 
 * 📄 [`docs/Quick Subnetting Refresher (For Cloud Engineers).md`](https://github.com/OOyaluade/cloud-infra-bootstrapping/blob/main/docs/Quick%20Subnetting%20Refresher%20%28For%20Cloud%20Engineers%29.md) for binary subnetting concepts
-* 🧱 [`02_modules/vpc/`](https://github.com/OOyaluade/cloud-infra-bootstrapping/02_modules/vpc) for the modular Terraform code that defines:
+* 🧱 [`02_modules/vpc/`](https://github.com/OOyaluade/cloud-infra-bootstrapping/tree/main/02_modules/vpc) for the modular Terraform code that defines:
 
   * Public and private subnets
   * Route tables and associations
