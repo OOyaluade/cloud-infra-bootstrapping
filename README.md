@@ -1,5 +1,5 @@
 # 📌 AWS CLI & IAM Setup
-*| This Project is evolving until launch in ~6 months(November,2025). Early contributors are welcome |*
+*| This Project is evolving until launch in ~6 months(November, 2025). Early contributors are welcome |*
 # 🏥 Cloud Infra Bootstrapping for Startup in:
 
 - Healthcare
