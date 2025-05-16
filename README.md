@@ -76,7 +76,8 @@ Their product suite includes telehealth apps, predictive analytics tools, and AI
 |5|Account Vending Machine|🔜 Upcoming|
 |6|RDS Database Setup (Private Subnets)|🔜 Upcoming|
 |7|EKS Cluster Creation (w/ OIDC, GPU Nodes for ML)|🔜 Upcoming|
-|8|Flask App Deployment (EC2 → EKS)[OOyaluade/Website_Terraform_Code](https://github.com/OOyaluade/Website_Terraform_Code)[OOyaluade/Extract_Transform_Load_AWS_WEB_APP](https://github.com/OOyaluade/Extract_Transform_Load_AWS_WEB_APP)|⚠️ Integration Pending|
+|8|Flask App Deployment (EC2 → EKS)[OOyaluade/Website_Terraform_Code](https://github.com/OOyaluade/Website_Terraform_Code)
+[OOyaluade/Extract_Transform_Load_AWS_WEB_APP](https://github.com/OOyaluade/Extract_Transform_Load_AWS_WEB_APP)|⚠️ Integration Pending|
 |9|Observability Stack (Grafana, Prometheus)|🔜 Upcoming|
 |10|Model Training + Deployment (MLflow)|🔜 Upcoming|
 |11|CI/CD Pipelines for Apps & Models|🔜 Upcoming|
