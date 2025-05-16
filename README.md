@@ -74,8 +74,7 @@ Their product suite includes telehealth apps, predictive analytics tools, and AI
 
 > \[!IMPORTANT]
 > Terraform requires that the **S3 bucket** (for storing the state file) and the **DynamoDB table** (for state locking) already exist before initializing the backend.
-> Terraform also does not need DynamoDB to be configured in it new update. You only need to set an existing S3 to `use_lockfile` to `true`. Don't worry, i have added this revised method to the `terraform.tf` file. Just remember to create the bucket that will manage your state file manually or use the CLI script bellow. 
-> This creates a *“chicken-and-egg” problem* because you can’t create them using Terraform if Terraform itself hasn’t been initialized yet.
+> Terraform also does not need DynamoDB to be configured in its new update. You only need to set an existing S3 to `use_lockfile` to `true`. Don't worry, i have added this revised method to the `terraform.tf` file. Just create the bucket that will manage your state file manually or use the CLI script below.
 
 ---
 
